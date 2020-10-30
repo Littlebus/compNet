@@ -22,15 +22,15 @@
 
 <div class="container">
     <div class="jumbotron">
-        <h1 class="main-title">智慧诊所 (SmartClinic)</h1>
-        <p>一种管理您的病人和诊断记录的新方式</p>
+        <h1 class="main-title">智能护理管理系统</h1>
+        <!-- <p>一种管理您的病人和诊断记录的新方式</p> -->
         {% if current_user.is_authenticated %}
             <br>
-            <p><b>欢迎您， {{ current_user.username }} 医生!</b></p>
+            <p><b>欢迎您， {{ current_user.username }} !</b></p>
         {% else %}
             <br>
             <p>
-                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" data-show-loading="true">登陆</a> &nbsp
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" data-show-loading="true">登录</a> &nbsp
                 <a href="{{ url_for('register') }}" class="btn btn-info btn-large" data-show-loading="true">注册</a>
             </p>
         {% endif %}
@@ -41,9 +41,9 @@
     <span class="featurette-image pull-right">
         <img src="{{ url_for('static', filename='images/screenshot.png') }}" alt="" class="imgBorder" width="300" height="150"/>
     </span>
-    <h2 class="featurette-heading">共享的病人列表 <span class="text-muted">您诊所中的所有医生都可以操作</span></h2>
+    <h2 class="featurette-heading">人员列表 <span class="text-muted">简单易用的人员管理系统</span></h2>
     <p class="lead">
-        您诊所中的每位医生都可以看到这个病人列表，但是只有拥有特定的权限才能修改列表中的内容。这个列表操作简单，您可以随时添加新病人，管理病人的档案，以及为病人添加诊断记录。
+        人员列表操作简单，您可以随时添加新人员，管理人员的档案，以及为人员添加体检记录。
     </p>
 </div>
 
@@ -54,10 +54,10 @@
     <span class="featurette-image pull-left">
         <img src="{{ url_for('static', filename='images/nn.jpg') }}" alt="" class="imgBorder" width="330" height="200"/>
     </span>
-    <h2 class="featurette-heading">智慧医疗 <span class="text-muted">使用神经网络分类器预测COVID-19疑似感染者 </span></h2>
+    <h2 class="featurette-heading">智能预测 <span class="text-muted">使用神经网络分类器预测抗寒能力</span></h2>
     <p class="lead">
-        当下新冠肺炎形势严峻。我们采用一个多层感知机来帮助您快速筛查出可能的无症状感染者。我们的分类模型基于以往的真实诊断数据构建，能够给出可信的预测结果。
-        您可以根据我们的预测结果灵活采取应对措施。疫情的越早发现意味着越好的控制和越高的康复概率。
+        我们采用多种聚类方法来帮助您快速预测人员的抗寒能力。我们的分类模型基于真实数据构建，能够给出可信的预测结果。
+        您可以根据我们的预测结果灵活采取应对措施。
     </p>
 </div>
 <br>
