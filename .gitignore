@@ -1,1 +1,8 @@
+*.db
 *.pyc
+.idea
+.vscode/
+logs/
+migrations/
+msearch/
+venv/

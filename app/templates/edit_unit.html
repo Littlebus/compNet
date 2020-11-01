@@ -3,28 +3,19 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
-    <table class="table table-hover">
-        <tr>
-            <td width="70px">
-                <br>
-                <a href="{{ url_for('user', username=unit.owner.username) }}">
-                    <img src="{{ unit.avatar(150) }}" />
-                </a>
-            </td>
-            <td>
-                <h1>
-                    {{ unit.name }}
-                </h1>
-                    &nbsp;<a href="{{ url_for('change_avatar', unit_id=unit.id, next=request.full_path) }}">修改头像</a>
-                <br>
-            </td>
-        </tr>
-    </table>
-    <br>
-    <br>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
-    <br>
-    {% endif %}
+<table class="table table-hover">
+    <tr>
+        <td>
+            <h1>{{ unit.name }}</h1>
+            <br>
+        </td>
+    </tr>
+</table>
+<br>
+<br>
+{% if form %}
+{{ wtf.quick_form(form) }}
+<br>
+{% endif %}
 
 {% endblock %}

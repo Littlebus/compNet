@@ -1,21 +1,65 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
     <table class="table table-hover">
         <tr>
-            <td width="256px"><img src="{{ user.avatar(256) }}"></td>
             <td>
-                <h1>{% if user.can('ADMINISTER') %}管理员{% else %}医生{% endif %}: {{ user.username }}</h1>
-                <br>
-                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                <h1>{% if user.is_admin() %}<b>管理员</b>{% endif %}{{ user.username }}</h1>
                 <br>
                 {% if user.last_seen %}
-                    <p>上次登陆时间: {{ moment(user.last_seen).format('LLL') }}</p>
-                {% endif %}
-                {% if current_user == user %}
-                    <a href="{{ url_for('edit_profile', next=request.full_path) }}">编辑您的简历</a>
+                    <p>上次登录时间: {{ moment(user.last_seen).format('LLL') }}</p>
                 {% endif %}
             </td>
         </tr>
     </table>
+
+    <div class="page-header">
+        <h3>人员列表</h3>
+    </div>
+
+    {% if units %}
+        {% for unit in units %}
+            <div class="modal fade" id="myModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                            </button>
+                            <h3 class="modal-title" id="myModalLabel">{{ unit.name }}</h3>
+                        </div>
+                        <div class="modal-body">
+                            <b>人员编号:</b><div align="left">{{ unit.member_id }}</div>
+                            <b>年龄:</b><div align="left">{% if unit.age %}{{ unit.age }}{% endif %}</div>
+                            <b>身高:</b><div align="left">{% if unit.height %}{{ unit.height }}{% endif %}</div>
+                            <b>体重:</b><div align="left">{% if unit.weight %}{{ unit.weight }}{% endif %}</div>
+                        </div>
+                        <div class="modal-footer">
+                            <div align="left" style="float:left"> 上次修改时间: {{ moment(unit.timestamp).fromNow() }}
+                            </div>
+                            <!-- <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关闭
+                            </button> -->
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <table class="table table-hover">
+                <tr>
+                    <td>
+                        <a href="{{ url_for('unit', unit_id=unit.id) }}">{{ unit.name }}</a>
+                        <div style="float:right;">
+                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
+                        </div>
+                        <br>
+                    </td>
+                </tr>
+            </table>
+        {% endfor %}
+        <div class="page-footer">{{ render_pagination(pagination) }}</div>
+    {% else %}
+        <div class="tip">没有人员记录</div>
+    {% endif %}
 {% endblock %}

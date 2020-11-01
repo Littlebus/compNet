@@ -3,21 +3,30 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
-    <h1>添加新的病历记录</h1>
-    <br>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
-    <br>
-    {% endif %}
+<div class="page-header">
+    <h1>添加新的记录
+        <div style="float:right;">
+            <a class="btn btn-primary btn-sm" onclick="addFormField()">添加新指标</a>
+        </div>
+    </h1>
+</div>
+<script src="../static/add_metric.js"></script>
+<br>
+{% if form %}
+{{ wtf.quick_form(form) }}
+<br>
+{% endif %}
 
-    <h3>最近添加的病历记录</h3>
-    {% if records %}
-        {% for record in records %}
-            {% include '_record.html' %}
-        {% endfor %}
-        <div class="page-footer">{{ render_pagination(pagination) }}</div>
-    {% else %}
-        <div class="tip"><h5>没有记录</h5></div>
-    {% endif %}
+<h3>最近添加的记录</h3>
+{% if records %}
+{% for record in records %}
+{% include '_record.html' %}
+{% endfor %}
+<div class="page-footer">{{ render_pagination(pagination) }}</div>
+{% else %}
+<div class="tip">
+    <h5>没有记录</h5>
+</div>
+{% endif %}
 
 {% endblock %}

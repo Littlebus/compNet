@@ -1,24 +1,18 @@
-
-    <table class="table table-hover">
-        <tr>
-            <td width="70px">
-                <a href="{{ url_for('patient_profile', unit_id=unit.id) }}">
-                    <img src="{{ unit.avatar(60) }}" />
-                </a>
-            </td>
-            <td>
-                本病人由 <a href="{{ url_for('user', username=unit.owner.username) }}">
-                    {{ unit.owner.username }}
-                </a> 医生在
-                 {{ moment(unit.timestamp).fromNow() }} 添加
-                <br>
-                <a href="{{ url_for('patient_profile', unit_id=unit.id) }}">
-                    <b>{{ unit.name }}</b>
-                </a>
-                <br>
-                {{ unit.age }} 岁
-                <br>
-                {{ unit.comment }}
-            </td>
-        </tr>
-    </table>
+<table class="table table-hover">
+    <tr>
+        <td>
+            <a href="{{ url_for('user', username=unit.creator.username) }}">
+                {{ unit.creator.username }}
+            </a> 在 {{ moment(unit.timestamp).fromNow() }} 添加
+            <br>
+            <a href="{{ url_for('unit', unit_id=unit.id) }}">
+                <b>{{ unit.name }}</b>
+            </a>
+            <br>
+            {% if unit.age %}
+            {{ unit.age }} 岁
+            <br>
+            {% endif %}
+        </td>
+    </tr>
+</table>

@@ -5,6 +5,7 @@
 {% block app_content %}
 
     {% if form %}
+        <script src="../static/add_metric.js"></script>
         <div class="modal fade" id="addRecord" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -12,17 +13,21 @@
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
                         </button>
                         <h4 class="modal-title" id="myModalLabel">
-                            为 {{ unit.name }} 添加病历记录
+                            为 {{ unit.name }} 添加体检记录
                         </h4>
+                        <div style="float:right;">
+                            <a class="btn btn-primary btn-sm" onclick="addFormField()">添加新指标</a>
+                        </div>
                     </div>
                     <div class="modal-body">
                         {{ wtf.quick_form(form) }}
+                        
                     </div>
-                    <div class="modal-footer">
+                    <!-- <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">
                             关闭
                         </button>
-                    </div>
+                    </div> -->
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
@@ -30,29 +35,21 @@
 
     <table class="table table-hover">
         <tr>
-            <td width="70px">
-                <br>
-                <img src="{{ unit.avatar(150) }}" />
-            </td>
             <td>
-                <h1>
-                    {{ unit.name }}
-                </h1>
-                <b>性别: </b>{% if unit.gender == 1 %}F{% else %}M{% endif %}<br>
-                <b>年龄: </b>{{ unit.age }}<br>
-                <b>身高: </b>{{ unit.height }} (cm)<br>
-                <b>体重: </b>{{ unit.weight }} (kg)<br>
-                <b>备注: </b>{{ unit.comment }}
+                <h1>{{ unit.name }}</h1>
+                <b>年龄: </b>{% if unit.age %} {{ unit.age }} {% endif %}<br>
+                <b>身高: </b>{% if unit.height %} {{ unit.height }} cm {% endif %}<br>
+                <b>体重: </b>{% if unit.weight %} {{ unit.weight }} kg {% endif %}<br>
             </td>
         </tr>
     </table>
 
 <!--<br>-->
     <div class="page-header">
-        <h3>病历记录
+        <h3>体检记录
             {% if form %}
             <div style="float:right;">
-                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addRecord">添加病历</button>
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addRecord">添加记录</button>
             </div>
             {% endif %}
         </h3>
@@ -66,26 +63,20 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
                             </button>
-                            <h3 class="modal-title" id="myModalLabel"><img src="{{ record.owner.avatar(70) }}" /> {{ record.owner.name }} 的病历记录 </h3>
+                            <h3 class="modal-title" id="myModalLabel"> {{ record.owner.name }} 的体检记录 </h3>
                         </div>
                         <div class="modal-body">
-                            <b>摘要:</b><div align="left">{{ record.body }}</div>
-                            <b>主诉:</b><br><div align="left">{{ record.complaint }}</div>
-                            <b>诊断史:</b><br><div align="left"> {{ record.history }}</div>
-                            <b>检验结果:</b><br><div align="left"> {{ record.results }}</div>
-                            <b>医生评估:</b><br><div align="left"> {{ record.assessment }}</div>
-                            <b>治疗计划:</b><br><div align="left"> {{ record.plan }}</div>
-                            <b>处方:</b><br><div align="left">{{ record.prescriptions }}</div>
-                            <b>人口统计学数据:</b><br><div align="left">{{ record.demographics }}</div>
+                            {% for key, value in record.get_metrics().items() %}
+                            <b>{{ key }}:</b><div align="left">{{ value }}</div>
+                            {% endfor %}
                         </div>
                         <div class="modal-footer">
                             <div align="left" style="float:left"> 本条记录由
-                                <a href="{{ url_for('user', username=record.author.username) }}">{{ record.author.username }}</a> 医生在
-                                {{ moment(record.timestamp).fromNow() }} 添加
+                                <a href="{{ url_for('user', username=record.creator.username) }}">{{ record.creator.username }}</a> 在 {{ moment(record.timestamp).fromNow() }} 添加
                             </div>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">
-                                Close
-                            </button>
+                            <!-- <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关闭
+                            </button> -->
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -93,21 +84,14 @@
 
             <table class="table table-hover">
                 <tr>
-                    <td width="70px">
-                        <a href="{{ url_for('patient_profile', unit_id=record.owner.id) }}">
-                            <img src="{{ record.owner.avatar(60) }}" />
-                        </a>
-                    </td>
                     <td>
-                        本条记录由 <a href="{{ url_for('user', username=record.author.username) }}">
-                            {{ record.author.username }}
-                        </a> 医生在
-                            {{ moment(record.timestamp).fromNow() }} 添加
+                        本条记录由 <a href="{{ url_for('user', username=record.creator.username) }}">
+                            {{ record.creator.username }}
+                        </a> 在 {{ moment(record.timestamp).fromNow() }} 添加
                         <div style="float:right;">
                             <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
                         </div>
                         <br>
-                        <b>{{ record.body }}</b>
                     </td>
                 </tr>
             </table>

@@ -17,10 +17,7 @@ def send_email(subject, recipients, text_body, html_body):
 
 
 def send_password_reset_email(user):
-    token = user.get_reset_password_token()
-
-    send_email('[SmartClinic] 重置密码',
-               recipients=[user.email],
-               text_body=render_template('email/reset_password.txt', user=user, token=token),
-               html_body=None)
-
+    token = user.get_jwt_token()
+    send_email('[智能护理管理系统] 重置密码', recipients=[user.email],
+        text_body=render_template('email/reset_password.txt', user=user, token=token),
+        html_body=None)

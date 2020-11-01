@@ -23,7 +23,6 @@
 <div class="container">
     <div class="jumbotron">
         <h1 class="main-title">智能护理管理系统</h1>
-        <!-- <p>一种管理您的病人和诊断记录的新方式</p> -->
         {% if current_user.is_authenticated %}
             <br>
             <p><b>欢迎您， {{ current_user.username }} !</b></p>
@@ -31,7 +30,7 @@
             <br>
             <p>
                 <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" data-show-loading="true">登录</a> &nbsp
-                <a href="{{ url_for('register') }}" class="btn btn-info btn-large" data-show-loading="true">注册</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-info btn-large" data-show-loading="true">注册</a>
             </p>
         {% endif %}
     </div>

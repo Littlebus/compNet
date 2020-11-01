@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
-{% block title %}Manage Records{% endblock %}
+{% block title %}体检记录{% endblock %}
 
 
 {% block app_content %}
 <div class="page-header">
-    <h1>病历记录
+    <h1>体检记录
         <small class="text-muted">{{ pagination.total }}</small>
         <div style="float:right;">
-            <a class="btn btn-primary btn-sm" href="{{ url_for('record_add', next=request.full_path) }}">添加新病历</a>
+            <a class="btn btn-primary btn-sm" href="{{ url_for('record_add', next=request.full_path) }}">添加新记录</a>
         </div>
     </h1>
 </div>
@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的病历的摘要">
+                <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的人员姓名">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="submit">搜索</button>
                 </span>
@@ -39,10 +39,11 @@
     <thead>
     <tr>
         <th data-field="id">序号</th>
-        <th data-field="avatar">病人头像</th>
-        <th data-field="name" data-filter-control="input">病人姓名</th>
-        <th data-field="abstract" data-filter-control="input">摘要</th>
-        <th data-field="user" data-filter-control="input">负责医生</th>
+        <th data-field="name" data-filter-control="input">姓名</th>
+        <th data-field="user" data-filter-control="input">VRCI</th>
+        <th data-field="user" data-filter-control="input">ICW</th>
+        <th data-field="user" data-filter-control="input">ECW</th>
+        <th data-field="timestamp" data-filter-control="input">创建时间</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -51,42 +52,36 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
-                    </button>
-                    <h3 class="modal-title" id="myModalLabel"><img src="{{ record.owner.avatar(70) }}" /> {{ record.owner.name }} 的病历记录 </h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="modal-title" id="myModalLabel">{{ record.owner.name }} 的体检记录 </h3>
                 </div>
                 <div class="modal-body">
-                    <b>摘要:</b><div align="left">{{ record.body }}</div>
-                    <b>主诉:</b><br><div align="left">{{ record.complaint }}</div>
-                    <b>诊断史:</b><br><div align="left"> {{ record.history }}</div>
-                    <b>检验结果:</b><br><div align="left"> {{ record.results }}</div>
-                    <b>医生评估:</b><br><div align="left"> {{ record.assessment }}</div>
-                    <b>治疗计划:</b><br><div align="left"> {{ record.plan }}</div>
-                    <b>处方:</b><br><div align="left">{{ record.prescriptions }}</div>
-                    <b>人口统计学数据:</b><br><div align="left">{{ record.demographics }}</div>
+                    {% for key, value in record.get_metrics().items() %}
+                    <b>{{ key }}:</b><div align="left">{{ value }}</div>
+                    {% endfor %}
                 </div>
                 <div class="modal-footer">
                     <div align="left" style="float:left"> 本条记录由
-                        <a href="{{ url_for('user', username=record.author.username) }}">{{ record.author.username }}</a> 医生在
+                        <a href="{{ url_for('user', username=record.creator.username) }}">{{ record.creator.username }}</a> 在
                          {{ moment(record.timestamp).fromNow() }} 添加
                     </div>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal">
                         关闭
-                    </button>
+                    </button> -->
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
     <tr>
         <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
-        <td><img src="{{ record.owner.avatar(30) }}" /></td>
-        <td><a href="{{ url_for('patient_profile', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a></td>
-        <td>{{ record.body }}</td>
-        <td><a href="{{ url_for('user', username=record.author.username) }}">{{ record.author.username }}{% if record.author.can('ADMINISTER') %} (Admin){% endif %}</a></td>
-        {% if (record.author == current_user) or (current_user.can('ADMINISTER')) %}
+        <td><a href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a></td>
+        <td>{{ record.get_metrics().get('VRCI', '') }}</td>
+        <td>{{ record.get_metrics().get('ICW', '') }}</td>
+        <td>{{ record.get_metrics().get('ECW', '') }}</td>
+        <td>{{ moment(record.timestamp).format('LLL') }}</td>
+        {% if (record.creator == current_user) or (current_user.is_admin()) %}
         <td>
             <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
-            <a class="btn btn-info btn-sm" href="{{ url_for('record_edit', record_id=record.id, next=request.full_path) }}">编辑</a>
             <form style="display: inline" class="inline" method="post" action="{{ url_for('record_delete', record_id=record.id, next=request.full_path) }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('你确定要删除吗?');">删除</button>
@@ -95,7 +90,6 @@
         {% else %}
         <td>
             <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
-            <button class="btn btn-info btn-sm disabled" >编辑</button>
             <button class="btn btn-danger btn-sm disabled">删除</button>
         </td>
         {% endif %}
@@ -105,7 +99,7 @@
 
 <div class="page-footer">{{ render_pagination(pagination) }}</div>
 {% else %}
-<div class="tip"><h5>No Records.</h5></div>
+<div class="tip"><h5>没有体检记录</h5></div>
 {% endif %}
 {% endblock %}
 
