@@ -1,13 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
 getopts g GUNICORN
 DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 DB=$DIR"/data.db"
+LOGS=$DIR"/logs/"
 MIGRATIONS=$DIR"/migrations/"
 
 # 创建.db文件
 if [ ! -f $DB ]; then
   touch $DB
+fi
+
+# 创建logs文件夹
+if [ ! -d $LOGS ]; then
+  mkdir $LOGS
 fi
 
 # 初始化数据库

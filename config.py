@@ -8,8 +8,7 @@ class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 
     # db
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # mail
@@ -43,12 +42,12 @@ class Config(object):
         },
         'handlers': {
             'console': {
-                'level': 'DEBUG',
+                'level': 'INFO',
                 'class': 'logging.StreamHandler',
                 'formatter': 'console'
             },
             'tiger': {
-                'level': 'DEBUG',
+                'level': 'INFO',
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'console',
                 'filename': os.path.join(basedir, 'logs/care.log'),
@@ -59,6 +58,6 @@ class Config(object):
         },
         'root': {
             'handlers': ['console', 'tiger'],
-            'level': 'DEBUG'
+            'level': 'INFO'
         }
     }
