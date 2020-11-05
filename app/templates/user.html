@@ -6,7 +6,16 @@
     <table class="table table-hover">
         <tr>
             <td>
-                <h1>{% if user.is_admin() %}<b>管理员</b>{% endif %}{{ user.username }}</h1>
+                <h1>
+                    {% if user.is_admin() %}<b>管理员 </b>{% endif %}{{ user.username }}
+                    <div style="float:right;">
+                        {% if user == current_user %}
+                        <a class="btn btn-primary btn-sm" href="{{ url_for('change_password', next=request.full_path) }}">修改密码</a>
+                        {% else %}
+                        <a class="btn btn-primary btn-sm disabled">修改密码</a>
+                        {% endif %}
+                    </div>
+                </h1>
                 <br>
                 {% if user.last_seen %}
                     <p>上次登录时间: {{ moment(user.last_seen).format('LLL') }}</p>
