@@ -9,7 +9,7 @@ from werkzeug.urls import url_parse
 import app.evaluator as evaluator
 from app import app, db, login, search
 from app.email import send_password_reset_email
-from app.forms import (EvaluateForm, LoginForm, RecordForm, RegistrationForm,
+from app.forms import (ChangePasswordForm, EvaluateForm, LoginForm, RecordForm, RegistrationForm,
                        ResetPasswordForm, ResetPasswordRequestForm, UnitForm)
 from app.models import Evaluation, Record, Unit, User
 from app.utils import addtodict3, redirect_back
@@ -34,7 +34,7 @@ def index():
 
 @login.user_loader
 def load_user(id):
-	return User.query.get(int(id))
+    return User.query.get(int(id))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -89,6 +89,18 @@ def user(username):
     units = pagination.items
     return render_template('user.html', page=page, pagination=pagination,
         units=units, user=user)
+
+
+@app.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        current_user.password_hash = generate_password_hash(form.new_password.data)
+        db.session.commit()
+        flash('成功修改密码', category='info')
+        return redirect_back()
+    return render_template('change_password.html', title='修改密码', form=form)
 
 
 @app.route('/reset', methods=['GET', 'POST'])
