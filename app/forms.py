@@ -42,8 +42,8 @@ class UnitForm(FlaskForm):
 
 
 class RecordForm(FlaskForm):
-    unit_id              = SelectField('人员', coerce=int)
-    submit               = SubmitField('提交')
+    unit_id = SelectField('人员', coerce=int)
+    submit  = SubmitField('提交')
 
 
 class ResetPasswordRequestForm(FlaskForm):

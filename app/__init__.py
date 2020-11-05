@@ -10,6 +10,7 @@ from flask_moment import Moment
 from flask_msearch import Search
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from werkzeug.security import generate_password_hash
 
 
 app = Flask(__name__)
@@ -33,3 +34,16 @@ from app import errors, models, routes
 logging.config.dictConfig(app.config['LOG_CONFIG'])
 logger = logging.getLogger('chardet.charsetprober')
 logger.setLevel(logging.INFO)
+
+# 创建管理员用户
+admin = models.User(
+    username      = 'admin',
+    email         = '',
+    password_hash = generate_password_hash('admin'),
+    admin         = True
+)
+try:
+    db.session.add(admin)
+    db.session.commit()
+except:
+    db.session.rollback()
