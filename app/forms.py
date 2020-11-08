@@ -45,6 +45,9 @@ class UnitForm(FlaskForm):
 
 class RecordForm(FlaskForm):
     unit_id = SelectField('人员', coerce=int)
+    AGE = FloatField("年龄", validators=[DataRequired()])
+    HEIGHT = FloatField("身高", validators=[DataRequired()])
+    WEIGHT = FloatField("体重", validators=[DataRequired()])
     submit  = SubmitField('提交')
 
 
