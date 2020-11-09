@@ -18,15 +18,7 @@
     <thead>
     <tr>
         <th data-field="id">序号</th>
-        <th>患COVID-19概率</th>
-        <th>性别</th>
-        <th>年龄</th>
-        <th>是否接触过患病者</th>
-        <th>核算检测结果</th>
-        <th>X光检测结果</th>
-        <th>WBC（白细胞）</th>
-        <th>RBC（红细胞）</th>
-        <th>HGB（血红蛋白）</th>
+        <th>类别</th>
         <th>操作</th>
     </tr>
     </thead>
@@ -40,19 +32,13 @@
                         <h3 class="modal-title" id="myModalLabel">快速诊断记录</h3>
                     </div>
                     <div class="modal-body">
-                        <b>患COVID-19概率:</b><div align="left">{{ evaluation.result }}</div>
-                        <b>性别:</b><br><div align="left">{% if evaluation.gender == 0 %}男{% else %}女{% endif %}</div>
-                        <b>年龄:</b><br><div align="left"> {{ evaluation.age }}</div>
-                        <b>是否接触过患病者?</b><br><div align="left"> {% if evaluation.contact_history == 0 %}否{% else %}是{% endif %}</div>
-                        <b>核酸检测结果:</b><br><div align="left"> {% if evaluation.acid_test == 0 %}阴性{% else %}阳性{% endif %}</div>
-                        <b>X光检测结果:</b><br><div align="left"> {% if evaluation.x_ray == 0 %}阴性{% else %}阳性{% endif %}</div>
-                        <b>WBC（白细胞）:</b><br><div align="left">{{ evaluation.wbc }}</div>
-                        <b>RBC（红细胞）:</b><br><div align="left">{{ evaluation.rbc }}</div>
-                        <b>HGB（血红蛋白）:</b><br><div align="left">{{ evaluation.hgb }}</div>
+                        {% for key, value in evaluation.get_metrics().items() %}
+                        <b>{{ key }}:</b><div align="left">{{ value }}</div>
+                        {% endfor %}
                     </div>
                     <div class="modal-footer">
                         <div align="left" style="float:left"> 本条记录在
-                             {{ moment(evaluation.timestamp).fromNow() }} 被添加, 病人的位置在 <b>{{ evaluation.country }}, {{ evaluation.continent }}</b>.
+                             {{ moment(evaluation.timestamp).fromNow() }} 被添加
                         </div>
                         <button type="button" class="btn btn-default" data-dismiss="modal">
                             Close
@@ -63,15 +49,7 @@
         </div><!-- /.modal -->
     <tr>
         <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
-        <td>{{ evaluation.result }}</td>
-        <td>{% if evaluation.gender == 0 %}男{% else %}女{% endif %}</td>
-        <td>{{ evaluation.age }}</td>
-        <td>{% if evaluation.contact_history == 0 %}否{% else %}是{% endif %}</td>
-        <td>{% if evaluation.acid_test == 0 %}阴性{% else %}阳性{% endif %}</td>
-        <td>{% if evaluation.x_ray == 0 %}阴性{% else %}阳性{% endif %}</td>
-        <td>{{ evaluation.wbc }}</td>
-        <td>{{ evaluation.rbc }}</td>
-        <td>{{ evaluation.hgb }}</td>
+        <td>{{ evaluation.label }}</td>
         <td>
             <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
             {% if (current_user.is_admin()) %}

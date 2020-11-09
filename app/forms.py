@@ -76,14 +76,5 @@ class ResetPasswordForm(FlaskForm):
 
 
 class EvaluateForm(FlaskForm):
-    gender = SelectField("性别", coerce=int, choices=[(0, '男'), (1, "女")])
-    age = IntegerField('年龄', validators=[DataRequired()])
-    contact_history = SelectField("是否接触过COVID-19感染者", coerce=int, choices=[(0, '否'), (1, "是")])
-    acid_test = SelectField("核酸检测结果", coerce=int, choices=[(0, '阴性'), (1, '阳性')])
-    x_ray = SelectField("X光检测结果", coerce=int, choices=[(0, '阴性'), (1, '阳性')])
-    wbc = FloatField("WBC(白细胞数量)", validators=[DataRequired()])
-    rbc = FloatField("RBC(红细胞数量)", validators=[DataRequired()])
-    hgb = FloatField("HGB(血红蛋白数量)", validators=[DataRequired()])
-    continent = StringField('洲', validators=[DataRequired()])
-    country = StringField('国家', validators=[DataRequired()])
+    record_id = SelectField('记录', coerce=int)
     submit = SubmitField('提交')

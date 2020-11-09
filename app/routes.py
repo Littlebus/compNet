@@ -1,5 +1,6 @@
 #coding=utf-8
 import json
+import pandas as pd
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -332,13 +333,20 @@ def quick_evaluation():
 @login_required
 def add_evaluation():
     form = EvaluateForm()
+    form.record_id.choices = [(r.id, r.metrics) for r in Record.query.all()] 
     if form.validate_on_submit():
+        metrics_temp = Record.query.get(form.record_id.data).metrics
         # load model
         model = evaluator.load_model()
-        field_names = ['gender', 'age', 'contact_history', 'acid_test', 'x_ray', 'wbc', 'rbc', 'hgb', 'continent', 'country']
-        datas = {field_name: getattr(form, field_name).data for field_name in field_names}
-        result = round(evaluator.estimate(model, datas), 5)
-        evaluation = Evaluation(**datas, result=result)
+        field_names = model.columns.values.tolist()
+        dic_input = json.loads(metrics_temp)
+        dic_test = {}
+        for word in field_names:
+            if word in dic_input:
+                dic_test[word] = dic_input[word]
+        result = evaluator.estimate(model, dic_test)
+        evaluation = Evaluation(metrics=metrics_temp, label=result)
+        print(evaluation)
         db.session.add(evaluation)
         db.session.commit()
         flash('您的快速诊断记录已经被提交', category='success')

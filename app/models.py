@@ -78,15 +78,9 @@ class Record(db.Model):
 
 class Evaluation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    gender = db.Column(db.Integer)
-    age = db.Column(db.Integer)
-    contact_history = db.Column(db.Integer)
-    acid_test = db.Column(db.Integer)
-    x_ray = db.Column(db.Integer)
-    wbc = db.Column(db.Float)
-    rbc = db.Column(db.Float)
-    hgb = db.Column(db.Float)
-    continent = db.Column(db.String(30))
-    country = db.Column(db.String(30))
+    metrics = db.Column(db.Text, nullable=False)
+    label = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    result = db.Column(db.Float)
+
+    def get_metrics(self):
+        return json.loads(self.metrics or '{}')

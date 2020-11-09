@@ -1,6 +1,8 @@
 import torch
 import torch.nn.functional as F
 import torch.distributions as dist
+import pandas as pd
+import numpy as np
 
 features = [
     ('gender', int, 2),
@@ -133,11 +135,16 @@ def make_dataset(sizes):
     data_item_sampler = DataItemSampler()
     return {stage: [data_item_sampler.sample() for i in range(size)] for stage, size in sizes.items()}
 
-def estimate(net, data_item):
-    input = convert_data_to_feature(data_item)
-    logit = net(input)
-    prob = torch.sigmoid(logit).item()
-    return prob
+def estimate(df, data):
+    for word in data:
+        data[word] = (data[word] - df[word][0]) / df[word][1]
+    distance = []
+    for i in range(5):
+        ret = 0
+        for word in data:
+            ret += (data[word] - df[word][2 + i]) ** 2
+        distance.append(ret)
+    return int(np.array(distance).argmin()) + 1
 
 def evaluate(net, dataset, batch_size, stage, threshold=0.5):
     dataloader = torch.utils.data.DataLoader(
@@ -192,11 +199,8 @@ def train(net, optimizer, dataset, n_epochs, batch_size, eval_batch_size):
     evaluate(net, dataset['test'], eval_batch_size, 'test')
 
 def load_model():
-    hidden_size = 20
-    net = Net(input_size, hidden_size)
-    net_state_dict, _ = torch.load('model.pt')
-    net.load_state_dict(net_state_dict)
-    return net
+    df = pd.read_csv('centers.csv')
+    return df
 
 if __name__ == '__main__':
     import argparse
