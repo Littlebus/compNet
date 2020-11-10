@@ -377,44 +377,29 @@ def dashboards():
     #     else:
     #         gender_data.append(['Female', row[1]/total])
 
-    suspected_male = 0
-    suspected_female = 0
-    data_0 = [0, 0, 0, 0, 0]
-    data_1 = [0, 0, 0, 0, 0]
-    data_susp = []
-    data_safe = []
-    for evaluation in db.session.query(Evaluation).filter(Evaluation.result >= 0.8).all():
-        index = int(evaluation.age / 20)
-        if(index > 4):
-            index = 4
-        if evaluation.gender == 0:
-            data_0[index] += 1
-            suspected_male += 1
-        else:
-            data_1[index] += 1
-            suspected_female += 1
-        data_susp.append([evaluation.rbc, evaluation.wbc])
+    data = [0, 0, 0, 0, 0]
 
-    for evaluation in db.session.query(Evaluation).filter(Evaluation.result < 0.8).all():
-        data_safe.append([evaluation.rbc, evaluation.wbc])
+    for i in range(5):
+        for record in db.session.query(Record).all():
+            if int(record.get_metrics().get('LABEL', '')) == i + 1:
+                data[i] += 1
 
     # 获取Evaluation的总数
-    total = Evaluation.query.count()
-    gender_data = []
-    gender_data.append(['男性', suspected_male / total])
-    gender_data.append(['女性', suspected_female / total])
-
+    total = sum(data)
+    pie_data = []
+    for i in range(5):
+        pie_data.append(['第' + str(i + 1) + '类', data[i] / total])
 
     #----------------------- 在这里填写data_map，格式为data_sample的格式 -----------------------------
 
-    data_map = {}
-    for evaluation in Evaluation.query.all():
-        if(evaluation.result >= 0.8):
-            addtodict3(data_map, evaluation.continent, evaluation.country, "Suspected")
-        else:
-            addtodict3(data_map, evaluation.continent, evaluation.country, "Normal")
+#    data_map = {}
+#    for evaluation in Evaluation.query.all():
+#        if(evaluation.result >= 0.8):
+#            addtodict3(data_map, evaluation.continent, evaluation.country, "Suspected")
+#        else:
+#            addtodict3(data_map, evaluation.continent, evaluation.country, "Normal")
 
-    print(data_map)
+#    print(data_map)
 
     # data_sample = {
     #     "Asia": {
@@ -444,4 +429,4 @@ def dashboards():
     #---------------------------------------------------------------------
 
     # 下面这一行中的 xxx=xxx 语句是把 xxx 传递到html，这样在html里就可以用 " {{ xxx }} " 的方式引用传过去的变量了
-    return render_template('dashboards.html', gender_data=gender_data, data_0=data_0, data_1=data_1, data_susp=data_susp, data_safe=data_safe, data_map=data_map)
+    return render_template('dashboards.html', gender_data=pie_data, data_0=data)
