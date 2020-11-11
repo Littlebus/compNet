@@ -137,7 +137,7 @@ def make_dataset(sizes):
 
 def estimate(df, data):
     for word in data:
-        data[word] = (data[word] - df[word][0]) / df[word][1]
+        data[word] = (float(data[word]) - df[word][0]) / df[word][1]
     distance = []
     for i in range(5):
         ret = 0

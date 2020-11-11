@@ -381,7 +381,7 @@ def dashboards():
 
     for i in range(5):
         for record in db.session.query(Record).all():
-            if int(record.get_metrics().get('LABEL', '')) == i + 1:
+            if int(record.get_metrics().get('LABEL', '0')) == i + 1:
                 data[i] += 1
 
     # 获取Evaluation的总数
