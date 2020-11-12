@@ -37,17 +37,14 @@ class RegistrationForm(FlaskForm):
 class UnitForm(FlaskForm):
     name      = TextAreaField('姓名', validators=[DataRequired(), Length(min=1, max=64)])
     member_id = IntegerField('人员编号', validators=[DataRequired()])
-    age       = IntegerField('年龄', validators=[Optional()])
-    height    = FloatField("身高(cm)", validators=[Optional()])
-    weight    = FloatField("体重(kg)", validators=[Optional()])
+    age       = IntegerField('年龄', validators=[DataRequired()])
+    height    = FloatField("身高(cm)", validators=[DataRequired()])
+    weight    = FloatField("体重(kg)", validators=[DataRequired()])
     submit    = SubmitField('提交')
 
 
 class RecordForm(FlaskForm):
     unit_id = SelectField('人员', coerce=int)
-    AGE = FloatField("年龄", validators=[DataRequired()])
-    HEIGHT = FloatField("身高", validators=[DataRequired()])
-    WEIGHT = FloatField("体重", validators=[DataRequired()])
     submit  = SubmitField('提交')
 
 

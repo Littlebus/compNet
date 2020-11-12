@@ -288,6 +288,10 @@ def record_add():
             del fields['csrf_token']
             del fields['unit_id']
             del fields['submit']
+        unit = Unit.query.get(form.unit_id.data)
+        fields['AGE'] = unit.age
+        fields['HEIGHT'] = unit.height
+        fields['WEIGHT'] = unit.weight
         record = Record(
             unit_id = form.unit_id.data,
             user_id = current_user.id,

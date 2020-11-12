@@ -42,8 +42,8 @@
         <th data-field="name" data-filter-control="input">姓名</th>
         <th data-field="user" data-filter-control="input">类别</th>
         <th data-field="user" data-filter-control="input">VRCI</th>
-        <th data-field="user" data-filter-control="input">ICW(Intracellular Water)</th>
-        <th data-field="user" data-filter-control="input">ECW(Extracellular Water)</th>
+        <th data-field="user" data-filter-control="input">ICW</th>
+        <th data-field="user" data-filter-control="input">ECW</th>
         <th data-field="timestamp" data-filter-control="input">创建时间</th>
         <th>操作</th>
     </tr>
@@ -76,7 +76,11 @@
     <tr>
         <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
         <td><a href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a></td>
-        <td>{{ record.get_metrics().get('LABEL', '') }}</td>
+        <td>
+            {% if record.get_metrics().get('LABEL') %} {{ record.get_metrics().get('LABEL') }}
+            {% else %} <a class="btn btn-primary btn-sm" href="{{ url_for('record_add', next=request.full_path) }}">预测</a>
+            {% endif %}
+        </td>
         <td>{{ record.get_metrics().get('VRCI', '') }}</td>
         <td>{{ record.get_metrics().get('ICW(Intracellular Water)', '') }}</td>
         <td>{{ record.get_metrics().get('ECW(Extracellular Water)', '') }}</td>

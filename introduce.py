@@ -3,8 +3,8 @@ import pandas as pd
 import datetime as dt
 import json
 
-ROWS = 10
-IDSTART = 2
+ROWS = 50
+IDSTART = 1
 RECORDSTART = 1
 
 path = r'./labeled.csv'
@@ -20,7 +20,7 @@ for i in range(ROWS):
         int(table['AGE'][i]),
         float(table['HEIGHT'][i]),
         float(table['WEIGHT'][i]),
-        dt.datetime.now(),
+        dt.datetime.utcnow(),
         1
     ))
 
@@ -41,7 +41,7 @@ for i in range(ROWS):
         RECORDSTART + i,
         IDSTART + i,
         1,
-        dt.datetime.now(),
+        dt.datetime.utcnow(),
         json.dumps(metrics)
     ))
 
