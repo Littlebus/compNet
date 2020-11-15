@@ -1,6 +1,5 @@
 #coding=utf-8
 import json
-import pandas as pd
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -9,18 +8,16 @@ from werkzeug.urls import url_parse
 
 import app.evaluator as evaluator
 from app import app, db, login, search
-from app.email import send_password_reset_email
-from app.forms import (ChangePasswordForm, EvaluateForm, LoginForm, RecordForm, RegistrationForm,
-                       ResetPasswordForm, ResetPasswordRequestForm, UnitForm)
+from app.forms import (ChangePasswordForm, EvaluateForm, LoginForm, RecordForm,
+                       RegistrationForm, UnitForm)
 from app.models import Evaluation, Record, Unit, User
 from app.utils import addtodict3, redirect_back
 
-
-@app.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
-        db.session.commit()
+# @app.before_request
+# def before_request():
+#     if current_user.is_authenticated:
+#         current_user.last_seen = datetime.utcnow()
+#         db.session.commit()
 
 
 # homepage
@@ -48,7 +45,9 @@ def login():
         if user is None or not check_password_hash(user.password_hash, form.password.data):
             flash('无效的用户名或密码', category='warning')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
+        login_user(user)
+        user.last_seen = datetime.utcnow()
+        db.session.commit()
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
@@ -104,38 +103,6 @@ def change_password():
     return render_template('change_password.html', title='修改密码', form=form)
 
 
-@app.route('/reset', methods=['GET', 'POST'])
-def reset():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_password_reset_email(user)
-            flash('已发送重置密码邮件', category='info')
-        else:
-            flash('电子邮箱未注册', category='warning')
-        return redirect(url_for('login'))
-    return render_template('reset_password_request.html', title='重置密码', form=form)
-
-
-@app.route('/reset/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    user = User.verify_jwt_token(token)
-    if not user:
-        return redirect(url_for('index'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        user.password_hash = generate_password_hash(form.password.data)
-        db.session.commit()
-        flash('您的密码已重置', category='info')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', form=form)
-
-
 # unit
 
 @app.route('/unit/manage')
@@ -171,12 +138,7 @@ def unit_add():
         db.session.commit()
         flash('成功添加新人员', category='info')
         return redirect_back()
-    page = request.args.get('page', 1, type=int)
-    pagination = Unit.query.order_by(Unit.timestamp.desc()) \
-        .paginate(page, app.config['UNITS_PER_PAGE_ADD'], False)
-    units = pagination.items
-    return render_template('add_unit.html', title='添加新人员', form=form,
-                           units=units, pagination=pagination)
+    return render_template('add_unit.html', title='添加新人员', form=form)
 
 
 @app.route('/unit/<int:unit_id>/edit', methods=['GET', 'POST'])
@@ -235,6 +197,9 @@ def unit(unit_id):
             del fields['csrf_token']
             del fields['unit_id']
             del fields['submit']
+        fields['AGE'] = unit.age
+        fields['HEIGHT'] = unit.height
+        fields['WEIGHT'] = unit.weight
         record = Record(
             unit_id = unit.id,
             user_id = current_user.id,
@@ -248,12 +213,8 @@ def unit(unit_id):
     pagination = unit.records.order_by(Record.timestamp.desc()) \
         .paginate(page, app.config['UNITS_PER_PAGE'], False)
     records = pagination.items
-    if unit.creator == current_user or current_user.is_admin():
-        return render_template('unit.html', page=page, pagination=pagination,
-            records=records, form=form, unit=unit)
-    else:
-        return render_template('unit.html', page=page, pagination=pagination,
-            records=records, unit=unit)
+    return render_template('unit.html', page=page, pagination=pagination,
+        records=records, form=form, unit=unit)
 
 
 # record
@@ -301,12 +262,7 @@ def record_add():
         db.session.commit()
         flash('成功添加新记录', category='info')
         return redirect_back()
-    page = request.args.get('page', 1, type=int)
-    pagination = Record.query.order_by(Record.timestamp.desc()) \
-        .paginate(page, app.config['RECORDS_PER_PAGE_ADD'], False)
-    records = pagination.items
-    return render_template('add_record.html', title='添加记录', form=form,
-                           records=records, pagination=pagination)
+    return render_template('add_record.html', title='添加记录', form=form)
 
 
 @app.route('/record/<int:record_id>/delete', methods=['POST'])
@@ -324,113 +280,31 @@ def record_delete(record_id):
 
 # others
 
-@app.route('/quick_evaluation', methods=['GET', 'POST'])
+@app.route('/predict/<int:record_id>')
 @login_required
-def quick_evaluation():
-    page = request.args.get('page', 1, type=int)
-    pagination = Evaluation.query.order_by(Evaluation.timestamp.desc()).paginate(
-        page, app.config['EVALUATIONS_PER_PAGE_ADD'], False)
-    evaluations = pagination.items
-    return render_template('quick_evaluation.html', title='Quick Evaluate', evaluations=evaluations, pagination=pagination, page=page)
-
-@app.route('/add_evaluation', methods=['GET', 'POST'])
-@login_required
-def add_evaluation():
-    form = EvaluateForm()
-    form.record_id.choices = [(r.id, r.metrics) for r in Record.query.all()] 
-    if form.validate_on_submit():
-        metrics_temp = Record.query.get(form.record_id.data).metrics
-        # load model
-        model = evaluator.load_model()
-        field_names = model.columns.values.tolist()
-        dic_input = json.loads(metrics_temp)
-        dic_test = {}
-        for word in field_names:
-            if word in dic_input:
-                dic_test[word] = dic_input[word]
-        result = evaluator.estimate(model, dic_test)
-        evaluation = Evaluation(metrics=metrics_temp, label=result)
-        print(evaluation)
-        db.session.add(evaluation)
-        db.session.commit()
-        flash('您的快速诊断记录已经被提交', category='success')
-        return redirect_back()
-    return render_template('add_evaluation.html', title='Add Evaluate', form=form)
-
-@app.route('/delete_evaluation/<int:evaluation_id>', methods=['POST'])
-@login_required
-def delete_evaluation(evaluation_id):
-    evaluation = Evaluation.query.get(evaluation_id)
-    if(current_user.is_admin() == False):
-        flash('没有访问权限', 'warning')
-        return redirect_back()
-    db.session.delete(evaluation)
+def predict(record_id):
+    record = Record.query.get(record_id)
+    metrics = record.get_metrics()
+    label = evaluator.estimate(metrics)
+    record.label = label
     db.session.commit()
-    flash('快速诊断记录已经被删除', 'success')
+    flash('预测成功！', 'success')
     return redirect_back()
+
 
 @app.route('/dashboards', methods=['GET', 'POST'])
 @login_required
 def dashboards():
-    # 下面这一行完成的是分类统计，按照Evaluation.gender，统计两个性别的人数
-    # evaluations = db.session.query(Evaluation.gender, func.sum(1)).group_by(Evaluation.gender).all()
-    # for row in evaluations:
-    #     print(row[0], row[1])
-    #     if row[0] == 0:
-    #         gender_data.append(['Male', row[1]/total])
-    #     else:
-    #         gender_data.append(['Female', row[1]/total])
-
     data = [0, 0, 0, 0, 0]
+    records = db.session.query(Record).all()
+    for record in records:
+        label = record.label
+        if label:
+            data[int(label) - 1] += 1
 
-    for i in range(5):
-        for record in db.session.query(Record).all():
-            if int(record.get_metrics().get('LABEL', '0')) == i + 1:
-                data[i] += 1
-
-    # 获取Evaluation的总数
     total = sum(data)
     pie_data = []
     for i in range(5):
         pie_data.append(['第' + str(i + 1) + '类', data[i] / total])
 
-    #----------------------- 在这里填写data_map，格式为data_sample的格式 -----------------------------
-
-#    data_map = {}
-#    for evaluation in Evaluation.query.all():
-#        if(evaluation.result >= 0.8):
-#            addtodict3(data_map, evaluation.continent, evaluation.country, "Suspected")
-#        else:
-#            addtodict3(data_map, evaluation.continent, evaluation.country, "Normal")
-
-#    print(data_map)
-
-    # data_sample = {
-    #     "Asia": {
-    #         "Sri Lanka": {
-    #             "Suspected": "75",
-    #             "Normal": "2"
-    #         },
-    #         "Bangladesh": {
-    #             "Suspected": "7",
-    #             "Normal": "20"
-    #         }
-    #     },
-    #     "Europe": {
-    #         "Poland": {
-    #             "Suspected": "1",
-    #             "Normal": "0"
-    #         },
-    #         "Norway": {
-    #             "Suspected": "1",
-    #             "Normal": "0"
-    #         },
-    #     }
-    # }
-    #
-    # data_map = data_sample
-
-    #---------------------------------------------------------------------
-
-    # 下面这一行中的 xxx=xxx 语句是把 xxx 传递到html，这样在html里就可以用 " {{ xxx }} " 的方式引用传过去的变量了
     return render_template('dashboards.html', gender_data=pie_data, data_0=data)

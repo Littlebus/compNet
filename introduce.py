@@ -24,17 +24,19 @@ for i in range(ROWS):
         1
     ))
 
-tag = ['NAME', '编号']
+tag = ['NAME', '编号', 'AGE', 'HEIGHT', 'WEIGHT']
 for word in tag:
     table = table.drop(word, axis=1)
 
-metrics = {}
-
 record_data = []
 for i in range(ROWS):
+    metrics = {}
+    label = ''
     for col in table.columns.values.tolist():
-        if col == 'AGE' or col == 'LABEL':
+        if col == 'AGE':
             metrics[col] = int(table[col][i])
+        elif col == 'LABEL':
+            label = int(table[col][i])
         else:
             metrics[col] = float(table[col][i])
     record_data.append((
@@ -42,7 +44,8 @@ for i in range(ROWS):
         IDSTART + i,
         1,
         dt.datetime.utcnow(),
-        json.dumps(metrics)
+        json.dumps(metrics),
+        label
     ))
 
 conn = sqlite3.connect('data.db')
@@ -50,7 +53,7 @@ c = conn.cursor()
 
 c.executemany('INSERT INTO unit VALUES (?,?,?,?,?,?,?,?)', unit_data)
 
-c.executemany('INSERT INTO record VALUES (?,?,?,?,?)', record_data)
+c.executemany('INSERT INTO record VALUES (?,?,?,?,?,?)', record_data)
 
 for row in c.execute('SELECT * FROM record'):
     print(row)

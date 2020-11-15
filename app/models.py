@@ -70,7 +70,8 @@ class Record(db.Model):
     unit_id        = db.Column(db.Integer, db.ForeignKey('unit.id'), nullable=False)
     user_id        = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp      = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    metrics        = db.Column(db.Text, nullable=False) # 具体指标，JSON字符串格式
+    metrics        = db.Column(db.Text, nullable=True) # 具体指标，JSON字符串格式
+    label          = db.Column(db.String(64), nullable=True)
 
     def get_metrics(self):
         return json.loads(self.metrics or '{}')

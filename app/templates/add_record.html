@@ -3,30 +3,21 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
-<div class="page-header">
-    <h1>添加新的记录
-        <div style="float:right;">
-            <a class="btn btn-primary btn-sm" onclick="addFormField()">添加新指标</a>
-        </div>
-    </h1>
+<h1 class="text-uppercase text-white font-weight-bold">添加新记录</h1>
+<hr class="divider my-4" />
+<script src="{{ url_for('static', filename='add_metric.js') }}"></script>
+<div class="row auto-scroll" style="height: 400px">
+    <div class="col-lg-4 mx-auto text-white">
+        {% if form %}
+        <form class="form" method="POST">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_field(form.unit_id) }}
+            <p id="myButtons">
+                <a class="btn btn-info btn-xl" onclick="addFormField()">添加新指标</a>
+                &nbsp {{ wtf.form_field(form.submit) }}
+            </p>
+        </form>
+        {% endif %}
+    </div>
 </div>
-<script src="../static/add_metric.js"></script>
-<br>
-{% if form %}
-{{ wtf.quick_form(form) }}
-<br>
-{% endif %}
-
-<h3>最近添加的记录</h3>
-{% if records %}
-{% for record in records %}
-{% include '_record.html' %}
-{% endfor %}
-<div class="page-footer">{{ render_pagination(pagination) }}</div>
-{% else %}
-<div class="tip">
-    <h5>没有记录</h5>
-</div>
-{% endif %}
-
 {% endblock %}

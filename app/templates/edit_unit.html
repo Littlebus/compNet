@@ -3,19 +3,13 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
-<table class="table table-hover">
-    <tr>
-        <td>
-            <h1>{{ unit.name }}</h1>
-            <br>
-        </td>
-    </tr>
-</table>
-<br>
-<br>
-{% if form %}
-{{ wtf.quick_form(form) }}
-<br>
-{% endif %}
-
+<h1 class="text-uppercase text-white font-weight-bold">{{ unit.name }}</h1>
+<hr class="divider my-4" />
+<div class="row">
+    <div class="col-lg-4 mx-auto text-white">
+        {% if form %}
+        {{ wtf.quick_form(form) }}
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

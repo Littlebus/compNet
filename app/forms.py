@@ -1,26 +1,28 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from werkzeug.security import check_password_hash
-from wtforms import (BooleanField, FloatField, IntegerField, PasswordField,
-                     SelectField, StringField, SubmitField, TextAreaField)
-from wtforms.validators import (DataRequired, Email, EqualTo, Length, Optional,
+from wtforms import (FloatField, IntegerField, PasswordField, SelectField,
+                     StringField, SubmitField)
+from wtforms.validators import (DataRequired, Email, EqualTo, Length,
                                 ValidationError)
 from app.models import User
 
 
+dr = DataRequired(message='字段格式不合法')
+
+
 class LoginForm(FlaskForm):
-    username    = StringField('用户名', validators=[DataRequired()])
-    password    = PasswordField('密码', validators=[DataRequired()])
-    remember_me = BooleanField('记住我')
+    username    = StringField('用户名', validators=[dr])
+    password    = PasswordField('密码', validators=[dr])
     submit      = SubmitField('登录')
 
 
 class RegistrationForm(FlaskForm):
-    username  = StringField('用户名', validators=[DataRequired()])
-    email     = StringField('电子邮箱', validators=[DataRequired(), Email()])
-    password  = PasswordField('密码', validators=[DataRequired()])
+    username  = StringField('用户名', validators=[dr])
+    email     = StringField('电子邮箱', validators=[dr, Email(message='无效的电子邮箱格式')])
+    password  = PasswordField('密码', validators=[dr])
     password2 = PasswordField('重复密码', \
-        validators=[DataRequired(), EqualTo('password', message='两次输入的密码不一致')])
+        validators=[dr, EqualTo('password', message='两次输入的密码不一致')])
     submit    = SubmitField('注册')
 
     def validate_username(self, field):
@@ -35,11 +37,11 @@ class RegistrationForm(FlaskForm):
 
 
 class UnitForm(FlaskForm):
-    name      = TextAreaField('姓名', validators=[DataRequired(), Length(min=1, max=64)])
-    member_id = IntegerField('人员编号', validators=[DataRequired()])
-    age       = IntegerField('年龄', validators=[DataRequired()])
-    height    = FloatField("身高(cm)", validators=[DataRequired()])
-    weight    = FloatField("体重(kg)", validators=[DataRequired()])
+    name      = StringField('姓名', validators=[dr, Length(min=1, max=64)])
+    member_id = IntegerField('人员编号', validators=[dr])
+    age       = IntegerField('年龄', validators=[dr])
+    height    = FloatField("身高(cm)", validators=[dr])
+    weight    = FloatField("体重(kg)", validators=[dr])
     submit    = SubmitField('提交')
 
 
@@ -49,27 +51,15 @@ class RecordForm(FlaskForm):
 
 
 class ChangePasswordForm(FlaskForm):
-    password      = PasswordField('当前密码', validators=[DataRequired()])
-    new_password  = PasswordField('新密码', validators=[DataRequired()])
+    password      = PasswordField('当前密码', validators=[dr])
+    new_password  = PasswordField('新密码', validators=[dr])
     new_password2 = PasswordField('确认新密码', \
-        validators=[DataRequired(), EqualTo('new_password', message='两次输入的密码不一致')])
+        validators=[dr, EqualTo('new_password', message='两次输入的密码不一致')])
     submit        = SubmitField('修改')
 
     def validate_password(self, field):
         if check_password_hash(current_user.password_hash, field.data) is False:
             raise ValidationError('当前密码错误')
-
-
-class ResetPasswordRequestForm(FlaskForm):
-    email  = StringField('电子邮箱', validators=[DataRequired(), Email()])
-    submit = SubmitField('发送重置密码邮件')
-
-
-class ResetPasswordForm(FlaskForm):
-    password  = PasswordField('密码', validators=[DataRequired()])
-    password2 = PasswordField('重复密码', \
-        validators=[DataRequired(), EqualTo('password', message='两次输入的密码不一致')])
-    submit    = SubmitField('重置密码')
 
 
 class EvaluateForm(FlaskForm):

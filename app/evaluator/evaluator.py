@@ -135,16 +135,24 @@ def make_dataset(sizes):
     data_item_sampler = DataItemSampler()
     return {stage: [data_item_sampler.sample() for i in range(size)] for stage, size in sizes.items()}
 
-def estimate(df, data):
-    for word in data:
-        data[word] = (float(data[word]) - df[word][0]) / df[word][1]
-    distance = []
+def estimate(data):
+    df = pd.read_csv('centers.csv')
+    field_names = df.columns.values.tolist()
+    for key in data:
+        if key in field_names:
+            data[key] = (float(data[key]) - df[key][0]) / df[key][1]
+        else:
+            del data[key]
+
+    label, min_dist = 0, -1
     for i in range(5):
-        ret = 0
-        for word in data:
-            ret += (data[word] - df[word][2 + i]) ** 2
-        distance.append(ret)
-    return int(np.array(distance).argmin()) + 1
+        dist = 0
+        for key in data:
+            dist += (data[key] - df[key][2 + i]) ** 2
+        if dist < min_dist or min_dist < 0:
+            label, min_dist = i + 1, dist
+
+    return label
 
 def evaluate(net, dataset, batch_size, stage, threshold=0.5):
     dataloader = torch.utils.data.DataLoader(
@@ -197,10 +205,6 @@ def train(net, optimizer, dataset, n_epochs, batch_size, eval_batch_size):
     except KeyboardInterrupt:
         pass
     evaluate(net, dataset['test'], eval_batch_size, 'test')
-
-def load_model():
-    df = pd.read_csv('centers.csv')
-    return df
 
 if __name__ == '__main__':
     import argparse

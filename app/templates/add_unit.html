@@ -3,21 +3,13 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block app_content %}
-    <h1>添加新人员</h1>
-    <br>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
-    <br>
-    {% endif %}
-
-    <h3>最近添加的人员</h3>
-    {% if units %}
-        {% for unit in units %}
-            {% include '_unit.html' %}
-        {% endfor %}
-        <div class="page-footer">{{ render_pagination(pagination) }}</div>
-    {% else %}
-        <div class="tip"><h5>没有人员</h5></div>
-    {% endif %}
-
+<h1 class="text-uppercase text-white font-weight-bold">添加新人员</h1>
+<hr class="divider my-4" />
+<div class="row">
+    <div class="col-lg-4 mx-auto text-white">
+        {% if form %}
+        {{ wtf.quick_form(form) }}
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

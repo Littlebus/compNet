@@ -5,108 +5,111 @@
 
 
 {% block app_content %}
-<div class="page-header">
-    <h1>体检记录
-        <small class="text-muted">{{ pagination.total }}</small>
-        <div style="float:right;">
-            <a class="btn btn-primary btn-sm" href="{{ url_for('record_add', next=request.full_path) }}">添加新记录</a>
-        </div>
-    </h1>
-</div>
-
-
+<h1>
+    <a class="text-uppercase text-white font-weight-bold position-relative" style="text-decoration: none"
+        href="{{ url_for('record_manage') }}">
+        体检记录 <small class="text-muted">{{ pagination.total }}</small>
+    </a>
+</h1>
+<a class="btn btn-primary btn-sm position-absolute" style="top: 0.75rem; right: 1rem"
+    href="{{ url_for('record_add', next=request.full_path) }}">添加新记录</a>
+<hr class="divider my-4" />
 
 <form class="bs-example bs-example-form" role="form" action="{{ url_for('record_manage') }}">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6 mx-auto">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的人员姓名">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">搜索</button>
-                </span>
+                <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的人员姓名"
+                    style="border-top-left-radius: 10rem; border-bottom-left-radius: 10rem; border: none; padding-left: 1.5rem">
+                <button class="btn btn-default" style="border-top-left-radius: 0; border-bottom-left-radius: 0"
+                    type="submit">搜索</button>
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
 </form>
 
-
-
 <br>
 
 {% if records %}
-
-<table id = "table" class="table table-striped"  data-filter-control="true" data-show-clear="true">
-    <thead>
-    <tr>
-        <th data-field="id">序号</th>
-        <th data-field="name" data-filter-control="input">姓名</th>
-        <th data-field="user" data-filter-control="input">类别</th>
-        <th data-field="user" data-filter-control="input">VRCI</th>
-        <th data-field="user" data-filter-control="input">ICW</th>
-        <th data-field="user" data-filter-control="input">ECW</th>
-        <th data-field="timestamp" data-filter-control="input">创建时间</th>
-        <th>操作</th>
-    </tr>
-    </thead>
-    {% for record in records %}
-    <div class="modal fade" id="myModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 class="modal-title" id="myModalLabel">{{ record.owner.name }} 的体检记录 </h3>
-                </div>
-                <div class="modal-body">
-                    {% for key, value in record.get_metrics().items() %}
-                    <b>{{ key }}:</b><div align="left">{{ value }}</div>
-                    {% endfor %}
-                </div>
-                <div class="modal-footer">
-                    <div align="left" style="float:left"> 本条记录由
-                        <a href="{{ url_for('user', username=record.creator.username) }}">{{ record.creator.username }}</a> 在
-                         {{ moment(record.timestamp).fromNow() }} 添加
-                    </div>
-                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal">
-                        关闭
-                    </button> -->
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-    <tr>
-        <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
-        <td><a href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a></td>
-        <td>
-            {% if record.get_metrics().get('LABEL') %} {{ record.get_metrics().get('LABEL') }}
-            {% else %} <a class="btn btn-primary btn-sm" href="{{ url_for('record_add', next=request.full_path) }}">预测</a>
-            {% endif %}
-        </td>
-        <td>{{ record.get_metrics().get('VRCI', '') }}</td>
-        <td>{{ record.get_metrics().get('ICW(Intracellular Water)', '') }}</td>
-        <td>{{ record.get_metrics().get('ECW(Extracellular Water)', '') }}</td>
-        <td>{{ moment(record.timestamp).format('LLL') }}</td>
-        {% if (record.creator == current_user) or (current_user.is_admin()) %}
-        <td>
-            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
-            <form style="display: inline" class="inline" method="post" action="{{ url_for('record_delete', record_id=record.id, next=request.full_path) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('你确定要删除吗?');">删除</button>
-            </form>
-        </td>
-        {% else %}
-        <td>
-            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal{{ loop.index }}">详情</button>
-            <button class="btn btn-danger btn-sm disabled">删除</button>
-        </td>
-        {% endif %}
-    </tr>
-    {% endfor %}
-</table>
-
+<div class="auto-scroll" style="height: 300px">
+    <table id="table" class="table table-hover" data-filter-control="true" data-show-clear="true">
+        <thead>
+            <tr>
+                <th data-field="id">序号</th>
+                <th data-field="name" data-filter-control="input">姓名</th>
+                <th data-field="clazz" data-filter-control="input">类别</th>
+                <th data-field="vrci" data-filter-control="input">VRCI</th>
+                <th data-field="icw" data-filter-control="input">ICW</th>
+                <th data-field="ecw" data-filter-control="input">ECW</th>
+                <th data-field="timestamp" data-filter-control="input">创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        {% for record in records %}
+        <div class="modal fade" id="myModal{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-text">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="myModalLabel">{{ record.owner.name }} 的体检记录 </h3>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                style="float: right; color: #fff;">&times;</button>
+                        </div>
+                        <div class="modal-body auto-scroll">
+                            {% for key, value in record.get_metrics().items() %}
+                            <div style="clear: both">
+                                <span class="float-left">{{ key }}:</span>
+                                <span class="float-right">{{ value }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="modal-footer">
+                            本条记录由
+                            <a
+                                href="{{ url_for('user', username=record.creator.username) }}">{{ record.creator.username }}</a>
+                            在 {{ moment(record.timestamp).fromNow() }} 添加
+                        </div>
+                    </div><!-- /.modal-text -->
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <tr>
+            <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
+            <td><a
+                    href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a>
+            </td>
+            <td>
+                {% if record.label %} {{ record.label }}
+                {% else %} <a class="btn btn-primary btn-sm"
+                    href="{{ url_for('predict', record_id=record.id, next=request.full_path) }}">预测</a>
+                {% endif %}
+            </td>
+            <td>{{ record.get_metrics().get('VRCI', '') }}</td>
+            <td>{{ record.get_metrics().get('ICW(Intracellular Water)', '') }}</td>
+            <td>{{ record.get_metrics().get('ECW(Extracellular Water)', '') }}</td>
+            <td>{{ moment(record.timestamp).format('LLL') }}</td>
+            <td>
+                <button class="btn btn-default btn-sm" data-toggle="modal"
+                    data-target="#myModal{{ loop.index }}">详情</button>
+                {% if (record.creator == current_user) or (current_user.is_admin()) %}
+                <form style="display: inline" class="inline" method="post"
+                    action="{{ url_for('record_delete', record_id=record.id, next=request.full_path) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('你确定要删除吗?');">删除</button>
+                </form>
+                {% else %}
+                <button class="btn btn-danger btn-sm disabled">删除</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 <div class="page-footer">{{ render_pagination(pagination) }}</div>
 {% else %}
-<div class="tip"><h5>没有体检记录</h5></div>
+<br>
+<h5 class="text-uppercase text-white font-weight-bold">没有体检记录</h5>
 {% endif %}
 {% endblock %}
-
-

@@ -2,20 +2,15 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>登录</h1>
-    <div class="row">
-        <div class="col-md-4">
-            {% if form %}
-            {{ wtf.quick_form(form) }}
-            {% endif %}
-        </div>
+<h1 class="text-uppercase text-white font-weight-bold">登录</h1>
+<hr class="divider my-4" />
+<div class="row">
+    <div class="col-lg-4 mx-auto text-white">
+        {% if form %}
+        {{ wtf.quick_form(form) }}
+        {% endif %}
     </div>
-    <br>
-    <p>新用户？<a href="{{ url_for('signup') }}">点击这里注册！</a></p>
-    <p>
-        忘记密码？
-        <a href="{{ url_for('reset') }}">点击这里重置密码</a>
-    </p>
-
-
+</div>
+<br>
+<p class="text-white font-weight-normal">新用户？<a href="{{ url_for('signup') }}">点击这里注册！</a></p>
 {% endblock %}

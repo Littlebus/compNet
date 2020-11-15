@@ -2,12 +2,12 @@
 
 ## Quickstart
 
-> require `python3.7`
+> require `python3.7` or above
 
 ```shell
 $ pip3 install virtualenv
 
-$ virtualenv venv --python=python3.7
+$ virtualenv venv
 
 $ source ./venv/bin/activate
 
@@ -19,5 +19,6 @@ $ ./dev_start.sh -g # or run with gunicorn
 
 ## TODO
 
-- 重置密码-邮件发送
-- 智能预测页面
+- ~~重置密码-邮件发送~~ (Abandoned)
+- 智能预测页面 (动画/UI?)
+- 统计数据页面的美化

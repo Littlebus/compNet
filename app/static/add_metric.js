@@ -6,7 +6,7 @@ function addFormField() {
     fields.add(field);
     var form = document.getElementsByClassName("form")[0];
     console.log(form);
-    var submit = form.getElementsByClassName("btn btn-default")[0];
+    var buttons = document.getElementById("myButtons")
     var div = document.createElement("div");
     div.setAttribute("class", "form-group ");
     var label = document.createElement("label");
@@ -22,5 +22,5 @@ function addFormField() {
     input.setAttribute("value", "");
     input.setAttribute("required", "required");
     div.appendChild(input);
-    form.insertBefore(div, submit)
+    form.insertBefore(div, buttons)
 }

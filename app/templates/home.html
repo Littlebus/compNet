@@ -1,65 +1,72 @@
 {% extends "base.html" %}
 
-{% block styles %}
-    {{ super() }}
-    <style>
-        .featurette-image.pull-left {
-            margin-right:25px;
-        }
-        .featurette-image.pull-right {
-            margin-left:25px;
-        }
-        .imgBorder {
-            border: 1px solid silver;
-        }
-    </style>
-{% endblock %}
-
-
-
-
 {% block app_content %}
-
-<div class="container">
-    <div class="jumbotron">
-        <h1 class="main-title">智能护理管理系统</h1>
-        {% if current_user.is_authenticated %}
-            <br>
-            <p><b>欢迎您， {{ current_user.username }} !</b></p>
-        {% else %}
-            <br>
-            <p>
-                <a href="{{ url_for('login') }}" class="btn btn-primary btn-large" data-show-loading="true">登录</a> &nbsp
-                <a href="{{ url_for('signup') }}" class="btn btn-info btn-large" data-show-loading="true">注册</a>
+<h1 class="text-uppercase text-white font-weight-bold">智能护理管理系统</h1>
+<br>
+{% if current_user.is_authenticated %}
+<p class="text-white font-weight-bold"><b>欢迎您， {{ current_user.username }} !</b></p>
+{% else %}
+<p>
+    <a href="{{ url_for('login') }}" class="btn btn-primary btn-xl" data-show-loading="true">登录</a> &nbsp
+    <a href="{{ url_for('signup') }}" class="btn btn-info btn-xl" data-show-loading="true">注册</a>
+</p>
+{% endif %}
+<hr class="divider my-4" />
+<div class="row">
+    <div class="col-lg-4 ml-auto text-center">
+        <div class="mt-5">
+            <svg t="1605270169672" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                p-id="20348" data-spm-anchor-id="a313x.7781069.0.i136" width="100" height="100">
+                <path d="M962 257H272c-24.9 0-45-20.1-45-45s20.1-45 45-45h690c24.9 0 45 20.1 45 45s-20.1 45-45 45z"
+                    fill="#f4623a" p-id="20349" data-spm-anchor-id="a313x.7781069.0.i139" class=""></path>
+                <path d="M77 212m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z" fill="#f4623a" p-id="20350"
+                    data-spm-anchor-id="a313x.7781069.0.i140" class=""></path>
+                <path d="M962 557H272c-24.9 0-45-20.1-45-45s20.1-45 45-45h690c24.9 0 45 20.1 45 45s-20.1 45-45 45z"
+                    fill="#17a2b8" p-id="20351" data-spm-anchor-id="a313x.7781069.0.i138" class=""></path>
+                <path d="M77 512m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z" fill="#17a2b8" p-id="20352"
+                    data-spm-anchor-id="a313x.7781069.0.i137" class=""></path>
+                <path d="M962 857H272c-24.9 0-45-20.1-45-45s20.1-45 45-45h690c24.9 0 45 20.1 45 45s-20.1 45-45 45z"
+                    fill="#17a2b8" p-id="20353" data-spm-anchor-id="a313x.7781069.0.i134" class=""></path>
+                <path d="M77 812m-60 0a60 60 0 1 0 120 0 60 60 0 1 0-120 0Z" fill="#17a2b8" p-id="20354"
+                    data-spm-anchor-id="a313x.7781069.0.i135" class=""></path>
+            </svg>
+            <h3 class="mt-4 mb-2 text-white" style="font-weight: 600">人员列表</h3>
+            <p class="text-white-75 font-weight-normal mb-5">
+                简单易用的人员管理系统。可以随时添加新人员，管理人员的档案，以及为人员添加体检记录。
             </p>
-        {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-4 mr-auto text-center">
+        <div class="mt-5">
+            <svg t="1605269611032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                p-id="6311" width="100" height="100">
+                <path
+                    d="M827.55584 222.57152a47.21152 47.21152 0 1 0-47.2064 47.41632 47.31392 47.31392 0 0 0 47.2064-47.41632z m-267.264 343.6032a129.37728 129.37728 0 1 0-129.37728 129.93536 129.65888 129.65888 0 0 0 129.38752-129.94048z m227.24096 189.44a91.3408 91.3408 0 1 0-91.32544 91.74528 91.54048 91.54048 0 0 0 91.33568-91.7504zM247.84896 235.09504a33.3824 33.3824 0 1 0-33.3824 33.52576 33.45408 33.45408 0 0 0 33.3824-33.52576z"
+                    fill="#17a2b8" p-id="6312" data-spm-anchor-id="a313x.7781069.0.i18" class=""></path>
+                <path
+                    d="M262.69696 586.79296a169.12896 169.12896 0 1 1 335.13472-45.80864l61.77792-8.448a231.59808 231.59808 0 0 0-38.71744-100.352l90.42432-91.136a136.45312 136.45312 0 0 0 67.34848 17.72032 138.38336 138.38336 0 1 0-113.45408-59.96544l-86.3232 86.99392a230.21056 230.21056 0 0 0-259.12832-26.14272l-29.48608-47.616a109.6192 109.6192 0 1 0-55.11168 29.59872l34.23232 55.26016a232.7808 232.7808 0 0 0-3.70688 330.29632l-59.83744 66.6112a66.19136 66.19136 0 0 0-17.48992-2.41664A67.15392 67.15392 0 1 0 251.392 836.608l63.90272-71.13216a229.16096 229.16096 0 0 0 146.20672 28.75392l-8.40704-62.04928a169.472 169.472 0 0 1-190.39744-145.38752z m515.968-442.24512a75.776 75.776 0 1 1-75.46368 75.776 75.71968 75.71968 0 0 1 75.46368-75.776zM164.75136 232.87296a48.18432 48.18432 0 1 1 48.18432 48.39424 48.34816 48.34816 0 0 1-48.18432-48.39424zM188.3648 862.72a4.352 4.352 0 1 1 4.33152-4.34688 4.34176 4.34176 0 0 1-4.33152 4.34688z m506.18368-294.76864a187.06944 187.06944 0 1 0 186.24 187.06944 186.88 186.88 0 0 0-186.24-187.07456z m0 311.50592a124.416 124.416 0 1 1 123.904-124.416 124.30848 124.30848 0 0 1-123.904 124.41088z"
+                    fill="#f4623a" p-id="6313" data-spm-anchor-id="a313x.7781069.0.i17" class=""></path>
+            </svg>
+            <h3 class="mt-4 mb-2 text-white" style="font-weight: 600">智能预测</h3>
+            <p class="text-white-75 font-weight-normal mb-5">
+                采用多种聚类方法快速预测人员的抗寒能力。分类模型基于真实数据构建，能够给出可信的预测结果。
+            </p>
+        </div>
+    </div>
+    <div class="col-lg-4 mr-auto text-center">
+        <div class="mt-5">
+            <svg t="1605270988461" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                p-id="4225" width="100" height="100">
+                <path d="M960 544A480 480 0 1 1 480 64v480h480z" fill="#f4623a" p-id="4226"
+                    data-spm-anchor-id="a313x.7781069.0.i25" class=""></path>
+                <path d="M1024 480H544V0a480 480 0 0 1 480 480z" fill="#17a2b8" p-id="4227"
+                    data-spm-anchor-id="a313x.7781069.0.i26" class="selected"></path>
+            </svg>
+            <h3 class="mt-4 mb-2 text-white" style="font-weight: 600">统计数据</h3>
+            <p class="text-white-75 font-weight-normal mb-5">
+                多种图表展示所有人员的统计结果。是否抗寒、有多抗寒、以及各项指标分布，一目了然。
+            </p>
+        </div>
     </div>
 </div>
-
-<div class="featurette">
-    <span class="featurette-image pull-right">
-        <img src="{{ url_for('static', filename='images/screenshot.png') }}" alt="" class="imgBorder" width="300" height="150"/>
-    </span>
-    <h2 class="featurette-heading">人员列表 <span class="text-muted">简单易用的人员管理系统</span></h2>
-    <p class="lead">
-        人员列表操作简单，您可以随时添加新人员，管理人员的档案，以及为人员添加体检记录。
-    </p>
-</div>
-
-<br>
-<hr>
-
-<div class="featurette">
-    <span class="featurette-image pull-left">
-        <img src="{{ url_for('static', filename='images/nn.jpg') }}" alt="" class="imgBorder" width="330" height="200"/>
-    </span>
-    <h2 class="featurette-heading">智能预测 <span class="text-muted">使用神经网络分类器预测抗寒能力</span></h2>
-    <p class="lead">
-        我们采用多种聚类方法来帮助您快速预测人员的抗寒能力。我们的分类模型基于真实数据构建，能够给出可信的预测结果。
-        您可以根据我们的预测结果灵活采取应对措施。
-    </p>
-</div>
-<br>
-
 {% endblock %}
-

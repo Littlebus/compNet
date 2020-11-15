@@ -4,7 +4,6 @@ from config import Config
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_msearch import Search
@@ -25,7 +24,6 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 search = Search()
 search.init_app(app)
-mail = Mail(app)
 
 
 from app import errors, models, routes
