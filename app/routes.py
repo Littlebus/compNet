@@ -301,15 +301,18 @@ def dashboards():
     
     data_label = 'LABEL'
     data = [0, 0, 0, 0, 0]
-    data_area = []
+    data_list = []
+    data_area_base = [[], [], [], [], [], []]
+    data_area_dir = []
 
     if q == '':
         records = db.session.query(Record).all()
         for record in records:
             label = record.label
             if label:
-                data[int(label) - 1] += 1
-                data_area.append(int(label))
+                label = int(label) - 1
+                data[label] += 1
+                data_list.append((label + 1, label))
     else:
         data_label = q
         records = db.session.query(Record).all()
@@ -317,8 +320,9 @@ def dashboards():
             para = record.get_metrics().get(q, '')
             label = record.label
             if para and label:
-                data[int(label) - 1] += 1
-                data_area.append(float(para))
+                label = int(label) - 1
+                data[label] += 1
+                data_list.append((float(para), label))
 
     total = sum(data)
     pie_data = []
@@ -328,8 +332,18 @@ def dashboards():
         else:
             pie_data.append(['第' + str(i + 1) + '类', 0])
 
-    data_area.sort()
+    data_list.sort(key=lambda pair: pair[0])
+    
+    for (k, w) in data_list:
+        for i in range(5):
+            data_area_base[i].append('null')
+        data_area_base[w][-1] = k
+        data_area_base[5].append(k)
+    
+    for i in range(5):
+        data_area_dir.append({'name': '第' + str(i + 1) + '类', 'data': data_area_base[i]})   
+    data_area_dir.append({'name': '总和', 'data': data_area_base[5]}) 
 
     data_index = [i for i in range(1, total + 1)]
 
-    return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, data_index=data_index, data_area=data_area)
+    return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, data_index=data_index, data_area=data_area_dir)
