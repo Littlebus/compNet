@@ -11,7 +11,7 @@ from app import app, db, login, search
 from app.forms import (ChangePasswordForm, EvaluateForm, LoginForm, RecordForm,
                        RegistrationForm, UnitForm)
 from app.models import Evaluation, Record, Unit, User
-from app.utils import addtodict3, redirect_back
+from app.utils import redirect_back
 
 # @app.before_request
 # def before_request():
@@ -295,16 +295,41 @@ def predict(record_id):
 @app.route('/dashboards', methods=['GET', 'POST'])
 @login_required
 def dashboards():
+
+    search.update_index()
+    q = request.args.get('q', '').strip()
+    
+    data_label = 'LABEL'
     data = [0, 0, 0, 0, 0]
-    records = db.session.query(Record).all()
-    for record in records:
-        label = record.label
-        if label:
-            data[int(label) - 1] += 1
+    data_area = []
+
+    if q == '':
+        records = db.session.query(Record).all()
+        for record in records:
+            label = record.label
+            if label:
+                data[int(label) - 1] += 1
+                data_area.append(int(label))
+    else:
+        data_label = q
+        records = db.session.query(Record).all()
+        for record in records:
+            para = record.get_metrics().get(q, '')
+            label = record.label
+            if para and label:
+                data[int(label) - 1] += 1
+                data_area.append(float(para))
 
     total = sum(data)
     pie_data = []
     for i in range(5):
-        pie_data.append(['第' + str(i + 1) + '类', data[i] / total])
+        if total > 0:
+            pie_data.append(['第' + str(i + 1) + '类', data[i] / total])
+        else:
+            pie_data.append(['第' + str(i + 1) + '类', 0])
 
-    return render_template('dashboards.html', gender_data=pie_data, data_0=data)
+    data_area.sort()
+
+    data_index = [i for i in range(1, total + 1)]
+
+    return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, data_index=data_index, data_area=data_area)

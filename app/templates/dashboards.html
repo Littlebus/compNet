@@ -14,146 +14,137 @@
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/treemap.js"></script>
-
-    <script language="JavaScript">
-    $(document).ready(function() {
-       var chart = {
-           plotBackgroundColor: null,
-           plotBorderWidth: null,
-           plotShadow: false
-       };
-       var title = {
-          text: '各类别人员占比情况'
-       };
-       var subtitle = {
-          text: '一共五类人员'
-       };
-       var tooltip = {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-       };
-       var plotOptions = {
-          pie: {
-             allowPointSelect: true,
-             cursor: 'pointer',
-             dataLabels: {
-                enabled: true,
-                format: '<b>{point.name}%</b>: {point.percentage:.1f} %',
-                style: {
-                   color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                }
-             }
-          }
-       };
-       var series= [{
-          type: 'pie',
-          name: '各类别占比',
-          data: {{ gender_data | tojson }}
-       }];
-       Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
-          return {
-             radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-             stops: [
-                [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-             ]
-          };
-       });
-
-       var json = {};
-       json.chart = chart;
-       json.title = title;
-       json.subtitle = subtitle;
-       json.tooltip = tooltip;
-       json.series = series;
-       json.plotOptions = plotOptions;
-       $('#container_pie').highcharts(json);
-    });
-    </script>
-
-
-    <script language="JavaScript">
-    $(document).ready(function() {
-       var chart = {
-          type: 'bar'
-       };
-       var title = {
-          text: '各类别人员统计数据'
-       };
-       var subtitle = {
-          text: '一共五类人员'
-       };
-       var xAxis = {
-          categories: ['第一类', '第二类', '第三类', '第四类', '第五类'],
-          title: {
-             text: null
-          }
-       };
-       var yAxis = {
-          min: 0,
-          title: {
-             text: '人数',
-             align: 'high'
-          },
-          labels: {
-             overflow: 'justify'
-          }
-       };
-       var tooltip = {
-          valueSuffix: ' case'
-       };
-       var plotOptions = {
-          bar: {
-             dataLabels: {
-                enabled: true
-             }
-          }
-       };
-       var legend = {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'top',
-          x: -40,
-          y: 100,
-          floating: true,
-          borderWidth: 1,
-          backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-          shadow: true
-       };
-       var credits = {
-          enabled: false
-       };
-
-       var series= [{
-             name: '所有人员',
-                data: {{ data_0 | tojson }}
+   {{ super() }}
+   
+   <script src="{{ url_for('static', filename='highcharts.js') }}"></script>
+   <script>
+   // Make monochrome colors and set them as default for all pies
+   Highcharts.getOptions().plotOptions.pie.colors = (function () {
+      var colors = [],
+         base = Highcharts.getOptions().colors[0],
+         i;
+      for (i = 0; i < 10; i += 1) {
+         // Start out with a darkened base color (negative brighten), and end
+         // up with a much brighter color
+         colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
+      }
+      return colors;
+   }());
+   // 初始化图表
+   var chart = Highcharts.chart('container_pie', {
+      chart: {
+         backgroundColor: 'rgba(0, 0, 0, 0)'
+      },
+      title: {
+         text: '抗寒检测总体情况',
+         style: {
+            color: '#FFFFFF',
+            fontWeight: 'bold'
+         }
+      },
+      tooltip: {
+         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+      },
+      plotOptions: {
+         pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+               enabled: true,
+               format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+               style: {
+                  color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'white'
+               }
             }
-       ];
+         }
+      },
+      series: [{
+         type: 'pie',
+         name: '各类型占比',
+         data: {{ pie_data | tojson}}
+      }]
+   });
+   </script>
 
-       var json = {};
-       json.chart = chart;
-       json.title = title;
-       json.subtitle = subtitle;
-       json.tooltip = tooltip;
-       json.xAxis = xAxis;
-       json.yAxis = yAxis;
-       json.series = series;
-       json.plotOptions = plotOptions;
-       json.legend = legend;
-       json.credits = credits;
-       $('#container_bar').highcharts(json);
-
-    });
+   <script language="JavaScript">
+   var chart = Highcharts.chart('container_bar',{
+      chart: {
+         type: 'area',
+         backgroundColor: 'rgba(0, 0, 0, 0)'
+      },
+      title: {
+         text: {{ data_label | tojson}} + '大小排序结果',
+         style: {
+            color: '#FFFFFF',
+            fontWeight: 'bold'
+         }
+      },
+      xAxis: {
+         allowDecimals: false,
+         categories: {{ data_index | tojson}},
+         labels: {
+            style: {
+               color: '#FFFFFF'
+            }
+         }
+      },
+      yAxis: {
+         allowDecimals: true,
+         title: {
+            text: {{ data_label | tojson}},
+            style: {
+               color: '#FFFFFF'
+            }
+         },
+         labels: {
+            style: {
+               color: '#FFFFFF'
+            }
+         }
+      },
+      tooltip: {
+         pointFormat: '有<b>{point.category}</b>人指标 <= <b>{point.y}</b>'
+      },
+      plotOptions: {
+         area: {
+            marker: {
+               enabled: false,
+               symbol: 'circle',
+               radius: 2,
+               states: {
+                  hover: {
+                     enabled: true
+                  }
+               }
+            }
+         }
+      },
+      series: [{
+         data: {{ data_area | tojson}}
+      }]
+   });
     </script>
 
 {% endblock %}
 
 {% block app_content %}
-    <h1 align="center">数据库中快速诊断记录的统计数据</h1>
-    <hr>
-    <div id="container_pie" style="width: 550px; height: 400px; margin: 0 auto"></div>
-    <hr>
-    <div id="container_bar" style="width: 550px; height: 400px; margin: 0 auto"></div>
+   <h1 align="center">数据库中体检记录的统计数据</h1>
+   <hr>
+   <form class="bs-example bs-example-form" role="form" action="{{ url_for('dashboards') }}">
+      <div class="row">
+         <div class="col-lg-6 mx-auto">
+               <div class="input-group">
+                  <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的指标名称"
+                     style="border-top-left-radius: 10rem; border-bottom-left-radius: 10rem; border: none; padding-left: 1.5rem">
+                  <button class="btn btn-default" style="border-top-left-radius: 0; border-bottom-left-radius: 0"
+                     type="submit">搜索</button>
+               </div><!-- /input-group -->
+         </div><!-- /.col-lg-6 -->
+      </div><!-- /.row -->
+   </form>
+   <br>
+   <hr>
+   <div id="container_pie" style="width: 550px; height: 400px; margin: 0 auto"></div>
+   <hr>
+   <div id="container_bar" style="width: 550px; height: 400px; margin: 0 auto"></div>
 {% endblock %}

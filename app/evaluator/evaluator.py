@@ -135,14 +135,14 @@ def make_dataset(sizes):
     data_item_sampler = DataItemSampler()
     return {stage: [data_item_sampler.sample() for i in range(size)] for stage, size in sizes.items()}
 
-def estimate(data):
+def estimate(data_raw):
     df = pd.read_csv('centers.csv')
     field_names = df.columns.values.tolist()
-    for key in data:
+    
+    data = {}
+    for key in data_raw:
         if key in field_names:
-            data[key] = (float(data[key]) - df[key][0]) / df[key][1]
-        else:
-            del data[key]
+            data[key] = (float(data_raw[key]) - df[key][0]) / df[key][1]
 
     label, min_dist = 0, -1
     for i in range(5):
