@@ -38,6 +38,7 @@
                 <th data-field="id">序号</th>
                 <th data-field="name" data-filter-control="input">姓名</th>
                 <th data-field="clazz" data-filter-control="input">类别</th>
+                <th data-field="upp" data-filter-control="input">是否上升</th>
                 <th data-field="vrci" data-filter-control="input">VRCI</th>
                 <th data-field="icw" data-filter-control="input">ICW</th>
                 <th data-field="ecw" data-filter-control="input">ECW</th>
@@ -81,6 +82,12 @@
             </td>
             <td>
                 {% if record.label %} {{ record.label }}
+                {% else %} <a class="btn btn-primary btn-sm"
+                    href="{{ url_for('predict', record_id=record.id, next=request.full_path) }}">预测</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if record.up %} {{ record.up }}
                 {% else %} <a class="btn btn-primary btn-sm"
                     href="{{ url_for('predict', record_id=record.id, next=request.full_path) }}">预测</a>
                 {% endif %}

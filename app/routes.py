@@ -284,9 +284,25 @@ def record_delete(record_id):
 @login_required
 def predict(record_id):
     record = Record.query.get(record_id)
-    metrics = record.get_metrics()
-    label = evaluator.estimate(metrics)
-    record.label = label
+
+    if record.get_metrics().get('VRCI', ''):
+        vrci = int(record.get_metrics().get('VRCI', ''))
+        if vrci > 12.9:
+            record.label = 2
+        else:
+            if vrci > 9.5:
+                record.label = 1
+            else:
+                record.label = 0
+
+    label, up = evaluator.estimate(record)
+    
+    if not (record.label):
+        record.label = label
+    
+    if not (record.up):
+        record.up = up
+
     db.session.commit()
     flash('预测成功！', 'success')
     return redirect_back()
@@ -296,13 +312,15 @@ def predict(record_id):
 @login_required
 def dashboards():
 
+    B = 3
+
     search.update_index()
     q = request.args.get('q', '').strip()
     
     data_label = 'LABEL'
-    data = [0, 0, 0, 0, 0]
+    data = [0 for i in range(B)]
     data_list = []
-    data_area_base = [[], [], [], [], [], []]
+    data_area_base = [[] for i in range(B + 1)]
     data_area_dir = []
 
     if q == '':
@@ -310,9 +328,9 @@ def dashboards():
         for record in records:
             label = record.label
             if label:
-                label = int(label) - 1
+                label = int(label)
                 data[label] += 1
-                data_list.append((label + 1, label))
+                data_list.append((label, label))
     else:
         data_label = q
         records = db.session.query(Record).all()
@@ -320,29 +338,30 @@ def dashboards():
             para = record.get_metrics().get(q, '')
             label = record.label
             if para and label:
-                label = int(label) - 1
+                label = int(label)
                 data[label] += 1
                 data_list.append((float(para), label))
 
     total = sum(data)
+    tag = ['弱习服', '中习服', '强习服']
     pie_data = []
-    for i in range(5):
+    for i in range(B):
         if total > 0:
-            pie_data.append(['第' + str(i + 1) + '类', data[i] / total])
+            pie_data.append([tag[i], data[i] / total])
         else:
-            pie_data.append(['第' + str(i + 1) + '类', 0])
+            pie_data.append([tag[i], 0])
 
     data_list.sort(key=lambda pair: pair[0])
     
     for (k, w) in data_list:
-        for i in range(5):
+        for i in range(B):
             data_area_base[i].append('null')
         data_area_base[w][-1] = k
-        data_area_base[5].append(k)
+        data_area_base[B].append(k)
     
-    for i in range(5):
-        data_area_dir.append({'name': '第' + str(i + 1) + '类', 'data': data_area_base[i]})   
-    data_area_dir.append({'name': '总和', 'data': data_area_base[5]}) 
+    for i in range(B):
+        data_area_dir.append({'name': tag[i], 'data': data_area_base[i]})   
+    data_area_dir.append({'name': '总和', 'data': data_area_base[B]}) 
 
     data_index = [i for i in range(1, total + 1)]
 
