@@ -38,10 +38,10 @@
                 <th data-field="id">序号</th>
                 <th data-field="name" data-filter-control="input">姓名</th>
                 <th data-field="clazz" data-filter-control="input">类别</th>
-                <th data-field="upp" data-filter-control="input">是否上升</th>
+                <th data-field="up" data-filter-control="input">是否上升</th>
                 <th data-field="vrci" data-filter-control="input">VRCI</th>
-                <th data-field="icw" data-filter-control="input">ICW</th>
-                <th data-field="ecw" data-filter-control="input">ECW</th>
+                <th data-field="icw" data-filter-control="input">血白细胞计数(WBC)</th>
+                <th data-field="ecw" data-filter-control="input">淋巴细胞百分比(LY)</th>
                 <th data-field="timestamp" data-filter-control="input">创建时间</th>
                 <th>操作</th>
             </tr>
@@ -81,20 +81,20 @@
                     href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a>
             </td>
             <td>
-                {% if record.label %} {{ record.label }}
+                {% if not record.label is none %} {{ config.LABEL[record.label] }}
                 {% else %} <a class="btn btn-primary btn-sm"
                     href="{{ url_for('predict', record_id=record.id, next=request.full_path) }}">预测</a>
                 {% endif %}
             </td>
             <td>
-                {% if record.up %} {{ record.up }}
+                {% if not record.up is none %} {{ config.UP[record.up] }}
                 {% else %} <a class="btn btn-primary btn-sm"
                     href="{{ url_for('predict', record_id=record.id, next=request.full_path) }}">预测</a>
                 {% endif %}
             </td>
             <td>{{ record.get_metrics().get('VRCI', '') }}</td>
-            <td>{{ record.get_metrics().get('ICW(Intracellular Water)', '') }}</td>
-            <td>{{ record.get_metrics().get('ECW(Extracellular Water)', '') }}</td>
+            <td>{{ record.get_metrics().get('血白细胞计数(WBC)', '') }}</td>
+            <td>{{ record.get_metrics().get('淋巴细胞百分比(LY)', '') }}</td>
             <td>{{ moment(record.timestamp).format('LLL') }}</td>
             <td>
                 <button class="btn btn-default btn-sm" data-toggle="modal"

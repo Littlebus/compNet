@@ -8,9 +8,9 @@ from werkzeug.urls import url_parse
 
 import app.evaluator as evaluator
 from app import app, db, login, search
-from app.forms import (ChangePasswordForm, EvaluateForm, LoginForm, RecordForm,
+from app.forms import (ChangePasswordForm, LoginForm, RecordForm,
                        RegistrationForm, UnitForm)
-from app.models import Evaluation, Record, Unit, User
+from app.models import Record, Unit, User
 from app.utils import redirect_back
 
 # @app.before_request
@@ -190,7 +190,7 @@ def unit(unit_id):
     form.unit_id.choices = [(unit.id, unit.name)]
     if form.validate_on_submit():
         if len(list(request.form.keys())) <= 3:
-            flash("没有要提交的体检指标", category="warning")
+            flash('没有要提交的体检指标', category='warning')
             return redirect(url_for('unit', unit_id=unit.id))
         fields = request.form.to_dict()
         if fields:
@@ -242,7 +242,7 @@ def record_add():
     form.unit_id.choices = [(u.id, u.name) for u in Unit.query.all()]
     if form.validate_on_submit():
         if len(list(request.form.keys())) <= 3:
-            flash("没有要提交的体检指标", category="warning")
+            flash('没有要提交的体检指标', category='warning')
             return redirect(url_for('record_add'))
         fields = request.form.to_dict()
         if fields:
@@ -284,47 +284,39 @@ def record_delete(record_id):
 @login_required
 def predict(record_id):
     record = Record.query.get(record_id)
-
-    if record.get_metrics().get('VRCI', ''):
-        vrci = int(record.get_metrics().get('VRCI', ''))
+    vrci = record.get_metrics().get('VRCI')
+    if vrci:
+        vrci = int(vrci)
         if vrci > 12.9:
             record.label = 2
+        elif vrci > 9.5:
+            record.label = 1
         else:
-            if vrci > 9.5:
-                record.label = 1
-            else:
-                record.label = 0
+            record.label = 0
 
     label, up = evaluator.estimate(record)
-    
-    if not (record.label):
-        record.label = label
-    
-    if not (record.up):
-        record.up = up
-
+    record.label = record.label or label
+    record.up = record.up or up
     db.session.commit()
     flash('预测成功！', 'success')
+    print(record.label, record.up)
     return redirect_back()
 
 
 @app.route('/dashboards', methods=['GET', 'POST'])
 @login_required
 def dashboards():
-
-    B = 3
-
-    search.update_index()
+    tag = app.config['LABEL']
+    B = len(tag)
     q = request.args.get('q', '').strip()
-    
     data_label = 'LABEL'
-    data = [0 for i in range(B)]
+    data = [0 for _ in range(B)]
     data_list = []
-    data_area_base = [[] for i in range(B + 1)]
+    data_area_base = [[] for _ in range(B + 1)]
     data_area_dir = []
 
+    records = db.session.query(Record).all()
     if q == '':
-        records = db.session.query(Record).all()
         for record in records:
             label = record.label
             if label:
@@ -333,9 +325,8 @@ def dashboards():
                 data_list.append((label, label))
     else:
         data_label = q
-        records = db.session.query(Record).all()
         for record in records:
-            para = record.get_metrics().get(q, '')
+            para = record.get_metrics().get(q)
             label = record.label
             if para and label:
                 label = int(label)
@@ -343,7 +334,6 @@ def dashboards():
                 data_list.append((float(para), label))
 
     total = sum(data)
-    tag = ['弱习服', '中习服', '强习服']
     pie_data = []
     for i in range(B):
         if total > 0:
@@ -352,17 +342,18 @@ def dashboards():
             pie_data.append([tag[i], 0])
 
     data_list.sort(key=lambda pair: pair[0])
-    
+
     for (k, w) in data_list:
         for i in range(B):
             data_area_base[i].append('null')
         data_area_base[w][-1] = k
         data_area_base[B].append(k)
-    
+
     for i in range(B):
         data_area_dir.append({'name': tag[i], 'data': data_area_base[i]})   
     data_area_dir.append({'name': '总和', 'data': data_area_base[B]}) 
 
     data_index = [i for i in range(1, total + 1)]
 
-    return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, data_index=data_index, data_area=data_area_dir)
+    return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, \
+        data_index=data_index, data_area=data_area_dir)

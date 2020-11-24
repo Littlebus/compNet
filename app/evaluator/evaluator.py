@@ -1,7 +1,6 @@
-import pandas as pd
 import numpy as np
 import pickle
-from sklearn.ensemble import GradientBoostingClassifier
+
 
 field_names = [
     '血白细胞计数(WBC)', 
@@ -48,38 +47,21 @@ field_names = [
 
 
 def estimate(record):
-    
-    file_vrci = open("vrci_classify.pickle", "rb")
-    file_up   = open("up_classify.pickle", "rb")
-
-    model_vrci = pickle.load(file_vrci)
-    model_up   = pickle.load(file_up)
-
-    file_vrci.close()
-    file_up.close()
+    with open('vrci_classify.pickle', 'rb') as file_vrci, \
+            open('up_classify.pickle', 'rb') as file_up:
+        model_vrci = pickle.load(file_vrci)
+        model_up = pickle.load(file_up)
 
     data_raw = record.get_metrics()
     data = []
-
     for key in field_names:
-        if key in data_raw:
-            data.append(data_raw[key])
-        else:
-            data.append(-1)
+        data.append(data_raw.get(key, -1))
 
     data_0 = (np.array(data, dtype='float64')).reshape((1, -1))
-
-    if not(record.label):
-        label = int(model_vrci.predict(data_0))
-    else:
-        label = int(record.label)
+    label = int(record.label or model_vrci.predict(data_0))
 
     data.insert(0, label)
     data_1 = (np.array(data, dtype='float32')).reshape((1, -1))
-
-    if not(record.up):
-        up = int(model_up.predict(data_1))
-    else:
-        up = int(record.up)
+    up = int(record.up or model_up.predict(data_1))
 
     return label, up

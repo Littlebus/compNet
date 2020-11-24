@@ -71,18 +71,8 @@ class Record(db.Model):
     user_id        = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     timestamp      = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     metrics        = db.Column(db.Text, nullable=True) # 具体指标，JSON字符串格式
-    label          = db.Column(db.String(16), nullable=True)
-    up             = db.Column(db.String(16), nullable=True)
-
-    def get_metrics(self):
-        return json.loads(self.metrics or '{}')
-
-
-class Evaluation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    metrics = db.Column(db.Text, nullable=False)
-    label = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    label          = db.Column(db.Integer, nullable=True)
+    up             = db.Column(db.Integer, nullable=True)
 
     def get_metrics(self):
         return json.loads(self.metrics or '{}')

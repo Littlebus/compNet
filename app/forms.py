@@ -40,8 +40,8 @@ class UnitForm(FlaskForm):
     name      = StringField('姓名', validators=[dr, Length(min=1, max=64)])
     member_id = IntegerField('人员编号', validators=[dr])
     age       = IntegerField('年龄', validators=[dr])
-    height    = FloatField("身高(cm)", validators=[dr])
-    weight    = FloatField("体重(kg)", validators=[dr])
+    height    = FloatField('身高(cm)', validators=[dr])
+    weight    = FloatField('体重(kg)', validators=[dr])
     submit    = SubmitField('提交')
 
 
@@ -60,8 +60,3 @@ class ChangePasswordForm(FlaskForm):
     def validate_password(self, field):
         if check_password_hash(current_user.password_hash, field.data) is False:
             raise ValidationError('当前密码错误')
-
-
-class EvaluateForm(FlaskForm):
-    record_id = SelectField('记录', coerce=int)
-    submit = SubmitField('提交')

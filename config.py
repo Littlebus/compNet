@@ -13,16 +13,17 @@ class Config(object):
 
     # pagination
     UNITS_PER_PAGE = 10
-    UNITS_PER_PAGE_ADD = 3
     RECORDS_PER_PAGE = 10
-    RECORDS_PER_PAGE_ADD = 3
-    EVALUATIONS_PER_PAGE_ADD = 10
 
     # flask-msearch
     MSEARCH_INDEX_NAME = 'msearch'
     MSEARCH_BACKEND = 'whoosh'
     MSEARCH_PRIMARY_KEY = 'id'
     MSEARCH_ENABLE = False # bug in flask-msearch
+
+    # label
+    LABEL = ['弱习服', '中习服', '强习服']
+    UP = ['否', '是']
 
     # log
     LOG_CONFIG = {
