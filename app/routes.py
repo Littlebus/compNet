@@ -319,8 +319,7 @@ def dashboards():
     if q == '':
         for record in records:
             label = record.label
-            if label:
-                label = int(label)
+            if not label is None:
                 data[label] += 1
                 data_list.append((label, label))
     else:
@@ -328,8 +327,7 @@ def dashboards():
         for record in records:
             para = record.get_metrics().get(q)
             label = record.label
-            if para and label:
-                label = int(label)
+            if para and not label is None:
                 data[label] += 1
                 data_list.append((float(para), label))
 
@@ -342,8 +340,7 @@ def dashboards():
             pie_data.append([tag[i], 0])
 
     data_list.sort(key=lambda pair: pair[0])
-
-    for (k, w) in data_list:
+    for k, w in data_list:
         for i in range(B):
             data_area_base[i].append('null')
         data_area_base[w][-1] = k
@@ -354,6 +351,10 @@ def dashboards():
     data_area_dir.append({'name': '总和', 'data': data_area_base[B]}) 
 
     data_index = [i for i in range(1, total + 1)]
+
+    print(data)
+    print(data_list)
+    print(pie_data)
 
     return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, \
         data_index=data_index, data_area=data_area_dir)

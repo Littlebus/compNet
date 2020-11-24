@@ -1,6 +1,5 @@
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 {% extends 'base.html' %}
-{% from 'bootstrap/pagination.html' import render_pagination %}
 
 {% block title %}统计数据{% endblock %}
 
@@ -126,23 +125,23 @@
 {% endblock %}
 
 {% block app_content %}
-   <h1 align="center">数据库中体检记录的统计数据</h1>
-   <hr>
-   <form class="bs-example bs-example-form" role="form" action="{{ url_for('dashboards') }}">
-      <div class="row">
-         <div class="col-lg-6 mx-auto">
-               <div class="input-group">
-                  <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的指标名称"
-                     style="border-top-left-radius: 10rem; border-bottom-left-radius: 10rem; border: none; padding-left: 1.5rem">
-                  <button class="btn btn-default" style="border-top-left-radius: 0; border-bottom-left-radius: 0"
-                     type="submit">搜索</button>
-               </div><!-- /input-group -->
-         </div><!-- /.col-lg-6 -->
-      </div><!-- /.row -->
-   </form>
-   <br>
-   <hr>
-   <div id="container_pie" style="width: 550px; height: 400px; margin: 0 auto"></div>
-   <hr>
-   <div id="container_bar" style="width: 550px; height: 400px; margin: 0 auto"></div>
+<h1 class="text-uppercase text-white font-weight-bold">统计数据</h1>
+<hr class="divider my-4" />
+<form class="bs-example bs-example-form" role="form" action="{{ url_for('dashboards') }}">
+   <div class="row">
+      <div class="col-lg-6 mx-auto">
+         <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的指标名称"
+               style="border-top-left-radius: 10rem; border-bottom-left-radius: 10rem; border: none; padding-left: 1.5rem">
+            <button class="btn btn-default" style="border-top-left-radius: 0; border-bottom-left-radius: 0"
+               type="submit">搜索</button>
+         </div><!-- /input-group -->
+      </div><!-- /.col-lg-6 -->
+   </div><!-- /.row -->
+</form>
+<br>
+<hr>
+<div id="container_pie" style="width: 550px; height: 400px; margin: 0 auto"></div>
+<hr>
+<div id="container_bar" style="width: 550px; height: 400px; margin: 0 auto"></div>
 {% endblock %}

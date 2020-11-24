@@ -41,7 +41,7 @@
                 <th data-field="up" data-filter-control="input">是否上升</th>
                 <th data-field="vrci" data-filter-control="input">VRCI</th>
                 <th data-field="icw" data-filter-control="input">血白细胞计数(WBC)</th>
-                <th data-field="ecw" data-filter-control="input">淋巴细胞百分比(LY)</th>
+                <th data-field="ecw" data-filter-control="input">粒细胞百分比</th>
                 <th data-field="timestamp" data-filter-control="input">创建时间</th>
                 <th>操作</th>
             </tr>
@@ -94,7 +94,7 @@
             </td>
             <td>{{ record.get_metrics().get('VRCI', '') }}</td>
             <td>{{ record.get_metrics().get('血白细胞计数(WBC)', '') }}</td>
-            <td>{{ record.get_metrics().get('淋巴细胞百分比(LY)', '') }}</td>
+            <td>{{ record.get_metrics().get('粒细胞百分比', '') }}</td>
             <td>{{ moment(record.timestamp).format('LLL') }}</td>
             <td>
                 <button class="btn btn-default btn-sm" data-toggle="modal"
