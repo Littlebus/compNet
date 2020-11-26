@@ -352,9 +352,5 @@ def dashboards():
 
     data_index = [i for i in range(1, total + 1)]
 
-    print(data)
-    print(data_list)
-    print(pie_data)
-
     return render_template('dashboards.html', pie_data=pie_data, data_label=data_label, \
         data_index=data_index, data_area=data_area_dir)

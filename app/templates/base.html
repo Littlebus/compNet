@@ -3,7 +3,7 @@
 {% block html_attribs %} lang="en" {% endblock %}
 
 {% block title %}
-{% if title %}{{ title }} - 护理管理系统{% else %}欢迎使用护理管理系统{% endif %}
+{% if title %}{{ title }} - 高寒部队兵源选拔系统{% else %}欢迎使用高寒部队兵源选拔系统{% endif %}
 {% endblock %}
 
 {%block metas %}
@@ -13,13 +13,14 @@
 
 {% block styles %}
 {{ super() }}
+
 <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3 mb-0" id="mainNav">
     <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="{{ url_for('index') }}">护理管理系统</a>
+        <a class="navbar-brand js-scroll-trigger" href="{{ url_for('index') }}">高寒部队兵源选拔系统</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
             data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
             aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
@@ -33,6 +34,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="{{ url_for('dashboards') }}">统计数据</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="">冷适应水平评估</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="">冷适应潜力评估</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto my-2 my-lg-0">

@@ -4,7 +4,7 @@ import datetime as dt
 import json
 from pprint import pprint
 
-ROWS = 5
+ROWS = 396
 IDSTART = 1
 RECORDSTART = 1
 
