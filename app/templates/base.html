@@ -3,7 +3,7 @@
 {% block html_attribs %} lang="en" {% endblock %}
 
 {% block title %}
-{% if title %}{{ title }} - 高寒部队兵源选拔系统{% else %}欢迎使用高寒部队兵源选拔系统{% endif %}
+{% if title %}{{ title }} - {% endif %}高寒部队兵源选拔系统
 {% endblock %}
 
 {%block metas %}
@@ -26,16 +26,13 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav my-2 my-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('unit_manage') }}">人员列表</a>
+                    <a class="nav-link js-scroll-trigger" href="{{ url_for('record') }}">体检记录</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('record_manage') }}">体检记录</a>
+                    <a class="nav-link js-scroll-trigger" href="{{ url_for('dashboard') }}">统计数据</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('dashboards') }}">统计数据</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="">冷适应水平评估</a>
+                    <a class="nav-link js-scroll-trigger" href="{{ url_for('evaluate') }}">冷适应水平评估</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" href="">冷适应潜力评估</a>
@@ -45,11 +42,8 @@
                 {% if current_user.is_anonymous %}
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{ url_for('login') }}">登录</a></li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="{{ url_for('user', username=current_user.username) }}">
-                        {% if current_user.is_admin() %}<b>管理员 </b>{% endif %}{{ current_user.username }}
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger disable">{{ current_user.username }}</a></li>
+                <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{ url_for('passwd') }}">修改密码</a></li>
                 <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{ url_for('logout') }}">登出</a></li>
                 {% endif %}
             </ul>

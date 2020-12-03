@@ -53,15 +53,31 @@ def estimate(record):
         model_up = pickle.load(file_up)
 
     data_raw = record.get_metrics()
+    label = record.label
+    up = record.up
+
+    vrci = data_raw.get('VRCI')
+    if vrci:
+        vrci = float(vrci)
+        if vrci > 12.9:
+            label = 2
+        elif vrci > 9.5:
+            label = 1
+        else:
+            label = 0
+
     data = []
     for key in field_names:
         data.append(data_raw.get(key, -1))
 
-    data_0 = (np.array(data, dtype='float64')).reshape((1, -1))
-    label = int(record.label or model_vrci.predict(data_0))
+    if label is None:
+        data_0 = (np.array(data, dtype='float64')).reshape((1, -1))
+        label = int(model_vrci.predict(data_0))
 
-    data.insert(0, label)
-    data_1 = (np.array(data, dtype='float32')).reshape((1, -1))
-    up = int(record.up or model_up.predict(data_1))
+    if up is None:
+        data.insert(0, label)
+        data_1 = (np.array(data, dtype='float32')).reshape((1, -1))
+        up = int(model_up.predict(data_1))
 
-    return label, up
+    record.label = label
+    record.up = up

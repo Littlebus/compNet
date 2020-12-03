@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
-{% block title %}体检记录{% endblock %}
-
-
 {% block app_content %}
 <h1>
     <a class="text-uppercase text-white font-weight-bold position-relative" style="text-decoration: none"
-        href="{{ url_for('record_manage') }}">
+        href="{{ url_for('record') }}">
         体检记录 <small class="text-muted">{{ pagination.total }}</small>
     </a>
 </h1>
@@ -15,11 +12,12 @@
     href="{{ url_for('record_add', next=request.full_path) }}">添加新记录</a>
 <hr class="divider my-4" />
 
-<form class="bs-example bs-example-form" role="form" action="{{ url_for('record_manage') }}">
+<form class="bs-example bs-example-form" role="form" action="{{ url_for('record') }}">
     <div class="row">
         <div class="col-lg-6 mx-auto">
             <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="请输入您想要搜索的人员姓名"
+                <input type="text" name="q" class="form-control"
+                    placeholder="{{request.args.get('q', '请输入您想要搜索的人员姓名')}}"
                     style="border-top-left-radius: 10rem; border-bottom-left-radius: 10rem; border: none; padding-left: 1.5rem">
                 <button class="btn btn-default" style="border-top-left-radius: 0; border-bottom-left-radius: 0"
                     type="submit">搜索</button>
@@ -27,9 +25,8 @@
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
 </form>
-
 <br>
-
+{% with records = pagination.items %}
 {% if records %}
 <div class="auto-scroll" style="height: 300px">
     <table id="table" class="table table-hover" data-filter-control="true" data-show-clear="true">
@@ -53,7 +50,7 @@
                 <div class="modal-content">
                     <div class="modal-text">
                         <div class="modal-header">
-                            <h3 class="modal-title" id="myModalLabel">{{ record.owner.name }} 的体检记录 </h3>
+                            <h3 class="modal-title" id="myModalLabel">{{ record.name }} 的体检记录 </h3>
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                                 style="float: right; color: #fff;">&times;</button>
                         </div>
@@ -66,20 +63,15 @@
                             {% endfor %}
                         </div>
                         <div class="modal-footer">
-                            本条记录由
-                            <a
-                                href="{{ url_for('user', username=record.creator.username) }}">{{ record.creator.username }}</a>
-                            在 {{ moment(record.timestamp).fromNow() }} 添加
+                            本条记录由 {{ record.creator.username }} 在 {{ moment(record.timestamp).fromNow() }} 添加
                         </div>
                     </div><!-- /.modal-text -->
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
         <tr>
-            <td>{{ loop.index + ((page - 1) * config.UNITS_PER_PAGE) }}</td>
-            <td><a
-                    href="{{ url_for('unit', unit_id=record.owner.id, next=request.full_path) }}">{{ record.owner.name }}</a>
-            </td>
+            <td>{{ loop.index + ((page - 1) * config.PER_PAGE) }}</td>
+            <td>{{ record.name }}</td>
             <td>
                 {% if not record.label is none %} {{ config.LABEL[record.label] }}
                 {% else %} <a class="btn btn-primary btn-sm"
@@ -119,4 +111,5 @@
 <br>
 <h5 class="text-uppercase text-white font-weight-bold">没有体检记录</h5>
 {% endif %}
+{% endwith %}
 {% endblock %}

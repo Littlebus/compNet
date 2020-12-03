@@ -1,8 +1,8 @@
+__pycache__/
 *.db
 *.pyc
-.idea/
 .vscode/
 logs/
 migrations/
-msearch/
 venv/
+whooshee/

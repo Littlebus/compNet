@@ -1,8 +1,6 @@
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 {% extends 'base.html' %}
 
-{% block title %}统计数据{% endblock %}
-
 {%block metas %}
    {{ super() }}
    <meta charset="utf-8">
@@ -14,7 +12,6 @@
 
 {% block scripts %}
    {{ super() }}
-   
    <script src="{{ url_for('static', filename='highcharts.js') }}"></script>
    <script>
    // Make monochrome colors and set them as default for all pies
@@ -127,7 +124,7 @@
 {% block app_content %}
 <h1 class="text-uppercase text-white font-weight-bold">统计数据</h1>
 <hr class="divider my-4" />
-<form class="bs-example bs-example-form" role="form" action="{{ url_for('dashboards') }}">
+<form class="bs-example bs-example-form" role="form" action="{{ url_for('dashboard') }}">
    <div class="row">
       <div class="col-lg-6 mx-auto">
          <div class="input-group">

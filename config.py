@@ -1,6 +1,4 @@
 import os
-
-
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -12,14 +10,10 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # pagination
-    UNITS_PER_PAGE = 10
-    RECORDS_PER_PAGE = 10
+    PER_PAGE = 10
 
-    # flask-msearch
-    MSEARCH_INDEX_NAME = 'msearch'
-    MSEARCH_BACKEND = 'whoosh'
-    MSEARCH_PRIMARY_KEY = 'id'
-    MSEARCH_ENABLE = False # bug in flask-msearch
+    # flask-whooshee
+    WHOOSHEE_MIN_STRING_LEN = 1
 
     # label
     LABEL = ['弱习服', '中习服', '强习服']

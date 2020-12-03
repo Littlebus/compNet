@@ -30,5 +30,6 @@ flask db upgrade heads
 if [ $GUNICORN = "g" ]; then
   gunicorn -w 4 -b 127.0.0.1:8000 app:app
 else
+  export FLASK_ENV=development
   python dev_start.py
 fi

@@ -6,9 +6,9 @@ from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_moment import Moment
-from flask_msearch import Search
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from flask_whooshee import Whooshee
 from werkzeug.security import generate_password_hash
 
 
@@ -22,8 +22,7 @@ login = LoginManager(app)
 login.login_view = 'login'
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-search = Search()
-search.init_app(app)
+whooshee = Whooshee(app)
 
 
 from app import errors, models, routes
@@ -36,7 +35,6 @@ logger.setLevel(logging.INFO)
 # 创建管理员用户
 admin = models.User(
     username      = 'admin',
-    email         = '',
     password_hash = generate_password_hash('admin'),
     admin         = True
 )

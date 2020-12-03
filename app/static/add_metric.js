@@ -1,4 +1,4 @@
-var fields = new Set(["csrf_token", "unit_id", "submit"]);
+var fields = new Set(["csrf_token", "submit"]);
 function addFormField() {
     var field = prompt("请输入指标名：");
     if (!field) { alert("指标名不能为空！"); return; }
