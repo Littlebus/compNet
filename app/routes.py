@@ -10,7 +10,7 @@ import app.evaluator as evaluator
 from app import app, db, login
 from app.forms import (EvaluateForm, LoginForm, PasswdForm, RecordForm,
                        SignupForm)
-from app.models import Record, User
+from app.models import Evaluation, Record, User
 from app.utils import redirect_back
 
 # homepage
@@ -213,4 +213,8 @@ def evaluate():
     form = EvaluateForm()
     if form.validate_on_submit():
         pass
-    return render_template('evaluate.html', title='冷适应评估', form=form)
+    page = request.args.get('page', 1, type=int)
+    pagination = Evaluation.query.order_by(Evaluation.timestamp.desc()) \
+        .paginate(page, app.config['PER_PAGE'], False)
+    return render_template('evaluate.html', title='冷适应水平评估',
+        form=form, page=page, pagination=pagination)

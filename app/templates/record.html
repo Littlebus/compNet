@@ -33,13 +33,13 @@
         <thead>
             <tr>
                 <th data-field="id">序号</th>
-                <th data-field="name" data-filter-control="input">姓名</th>
-                <th data-field="clazz" data-filter-control="input">类别</th>
-                <th data-field="up" data-filter-control="input">是否上升</th>
-                <th data-field="vrci" data-filter-control="input">VRCI</th>
-                <th data-field="icw" data-filter-control="input">血白细胞计数(WBC)</th>
-                <th data-field="ecw" data-filter-control="input">粒细胞百分比</th>
-                <th data-field="timestamp" data-filter-control="input">创建时间</th>
+                <th data-field="name">姓名</th>
+                <th data-field="clazz">类别</th>
+                <th data-field="up">是否上升</th>
+                <th data-field="vrci">VRCI</th>
+                <th data-field="icw">血白细胞计数(WBC)</th>
+                <th data-field="ecw">粒细胞百分比</th>
+                <th data-field="timestamp">创建时间</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -50,7 +50,7 @@
                 <div class="modal-content">
                     <div class="modal-text">
                         <div class="modal-header">
-                            <h3 class="modal-title" id="myModalLabel">{{ record.name }} 的体检记录 </h3>
+                            <h3 class="modal-title" id="myModalLabel">{{ record.name }} 的体检记录</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                                 style="float: right; color: #fff;">&times;</button>
                         </div>
@@ -63,7 +63,7 @@
                             {% endfor %}
                         </div>
                         <div class="modal-footer">
-                            本条记录由 {{ record.creator.username }} 在 {{ moment(record.timestamp).fromNow() }} 添加
+                            本记录由 {{ record.creator.username }} 在 {{ moment(record.timestamp).fromNow() }} 添加
                         </div>
                     </div><!-- /.modal-text -->
                 </div><!-- /.modal-content -->
@@ -87,7 +87,7 @@
             <td>{{ record.get_metrics().get('VRCI', '') }}</td>
             <td>{{ record.get_metrics().get('血白细胞计数(WBC)', '') }}</td>
             <td>{{ record.get_metrics().get('粒细胞百分比', '') }}</td>
-            <td>{{ moment(record.timestamp).format('LLL') }}</td>
+            <td>{{ moment(record.timestamp).format('L LTS') }}</td>
             <td>
                 <button class="btn btn-default btn-sm" data-toggle="modal"
                     data-target="#myModal{{ loop.index }}">详情</button>
