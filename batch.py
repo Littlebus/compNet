@@ -2,7 +2,7 @@ import datetime, json, pandas, sqlite3
 from pprint import pprint
 
 
-ROWS = 5
+ROWS = 100
 START = 1
 
 info = pandas.read_csv('member.csv', encoding='gbk', index_col=0, float_precision='round_trip')

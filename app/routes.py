@@ -39,7 +39,6 @@ def login():
             flash('无效的用户名或密码', category='warning')
             return redirect(url_for('login'))
         login_user(user)
-        db.session.commit()
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
