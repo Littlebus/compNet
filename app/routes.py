@@ -61,9 +61,17 @@ def signup():
         )
         db.session.add(user)
         db.session.commit()
-        flash('注册成功！', category='info')
-        return redirect(url_for('login'))
+        return jsonify({'status': 200})
     return render_template('signup.html', title='注册', form=form)
+
+
+# 验证用户名是否被注册的接口
+@app.route('/user', methods=['GET'])
+def user():
+    user = User.query.filter_by(username=request.args.get('username')).first()
+    if user is None:
+        return jsonify(True)
+    return jsonify(False)
 
 
 @app.route('/passwd', methods=['GET', 'POST'])
