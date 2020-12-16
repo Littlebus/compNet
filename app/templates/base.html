@@ -57,6 +57,7 @@
     <div class="container h-100">
         <div class="row h-75 align-items-center justify-content-center text-center">
             <div class="col-lg-10 align-self-end">
+                <div id="flash">
                 {% for message in get_flashed_messages(with_categories=True) %}
                 <div class="alert alert-{% if message[0] == 'message' %}info{% else %}{{ message[0] }}{% endif %}
                 mx-auto font-weight-bold">
@@ -64,6 +65,7 @@
                     {{ message[1] }}
                 </div>
                 {% endfor %}
+                </div>
                 {% block app_content %}{% endblock %}
                 <hr class="divider my-4">
                 <footer class="text-center text-white-75 font-weight-bold">
@@ -78,8 +80,10 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='ajax/libs/jquery/3.5.1/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js') }}"></script>
+<script src="{{ url_for('static', filename='ajax/libs/jquery-validate/1.19.2/localization/messages_zh.min.js') }}"></script>
 <script src="{{ url_for('static', filename='ajax/libs/moment.js/2.29.1/moment-with-locales.min.js') }}"></script>
+<script src="{{ url_for('static', filename='ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js') }}"></script>
 <script>
     moment.locale("en");
     function flask_moment_render(elem) {
@@ -112,6 +116,13 @@
 </script>
 <script>
     moment.locale("zh-CN");
+</script>
+<script>
+    var flashMessage = function (data, type = 'info') {
+        html = '';
+        html += '<div class="alert alert-' + type + ' mx-auto font-weight-bold"><button type="button" class="close" data-dismiss="alert">&times;</button>' + data + '</div>';
+        return html;
+    };
 </script>
 <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 {% endblock %}

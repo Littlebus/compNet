@@ -1,7 +1,8 @@
 #coding=utf-8
 import json
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import (abort, flash, jsonify, redirect, render_template, request,
+                   url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.urls import url_parse
@@ -36,13 +37,9 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not check_password_hash(user.password_hash, form.password.data):
-            flash('无效的用户名或密码', category='warning')
-            return redirect(url_for('login'))
+            return jsonify({'status': 400, 'message': '无效的用户名或密码'})
         login_user(user)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
+        return jsonify({'status': 200})
     return render_template('login.html', title='登录', form=form)
 
 

@@ -2183,6 +2183,16 @@ textarea.form-control {
   color: var(--red);
 }
 
+.form-group label[class="error"] {
+  position: absolute;
+  margin: 0;
+  float: right;
+  top: 2px;
+  right: 0px;
+  font-weight: 700;
+  color: var(--red);
+}
+
 .form-text {
   display: block;
   margin-top: 0.25rem;

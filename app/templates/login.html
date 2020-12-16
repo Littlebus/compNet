@@ -7,10 +7,49 @@
 <div class="row">
     <div class="col-lg-4 mx-auto text-white">
         {% if form %}
-        {{ wtf.quick_form(form) }}
+        {{ wtf.quick_form(form, id='loginForm') }}
         {% endif %}
     </div>
 </div>
 <br>
 <p class="text-white font-weight-normal">新用户？<a href="{{ url_for('signup') }}">点击这里注册！</a></p>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $().ready(function () {
+        $("#loginForm").validate({
+            rules: {
+                username: "required",
+                password: "required",
+            },
+            messages: {
+                username: "请输入用户名",
+                password: "请输入密码",
+            },
+            submitHandler: function (form) {
+                var param = $("#loginForm").serialize();
+                $.ajax({
+                    url: "/login",
+                    type: "post",
+                    dataType: "json",
+                    data: param,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.status == 200) {
+                            window.location.href = "/index";
+                        } else {
+                            $("#flash").html(flashMessage(result.message, 'warning'));
+                        }
+                        return false;
+                    }
+                });
+            },
+            invalidHandler: function (form, validator) {
+                return false;
+            }
+        })
+    });
+</script>
 {% endblock %}
