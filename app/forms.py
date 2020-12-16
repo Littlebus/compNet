@@ -12,22 +12,16 @@ dr = DataRequired(message='字段格式不合法')
 
 
 class LoginForm(FlaskForm):
-    username    = StringField('用户名', validators=[dr])
-    password    = PasswordField('密码', validators=[dr])
+    username    = StringField('用户名')
+    password    = PasswordField('密码')
     submit      = SubmitField('登录')
 
 
 class SignupForm(FlaskForm):
-    username  = StringField('用户名', validators=[dr])
-    password  = PasswordField('密码', validators=[dr])
-    password2 = PasswordField('重复密码', \
-        validators=[dr, EqualTo('password', message='两次输入的密码不一致')])
+    username  = StringField('用户名')
+    password  = PasswordField('密码')
+    password2 = PasswordField('重复密码')
     submit    = SubmitField('注册')
-
-    def validate_username(self, field):
-        user = User.query.filter_by(username=field.data).first()
-        if user is not None:
-            raise ValidationError('用户名已被注册')
 
 
 class RecordForm(FlaskForm):
