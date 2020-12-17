@@ -65,18 +65,18 @@ def signup():
 
 
 # 验证用户名是否被注册的接口
-@app.route('/user', methods=['GET'])
+@app.route('/user', methods=['POST'])
 def user():
-    user = User.query.filter_by(username=request.args.get('username')).first()
+    user = User.query.filter_by(username=request.form.get('username')).first()
     if user is None:
         return jsonify(True)
     return jsonify(False)
 
 
 # 验证当前用户密码是否正确的接口
-@app.route('/pwd', methods=['GET'])
+@app.route('/pwd', methods=['POST'])
 def pwd():
-    return jsonify(check_password_hash(current_user.password_hash, request.args.get('password')))
+    return jsonify(check_password_hash(current_user.password_hash, request.form.get('password')))
 
 
 @app.route('/passwd', methods=['GET', 'POST'])

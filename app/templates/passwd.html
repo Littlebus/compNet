@@ -23,8 +23,9 @@
                     required: true,
                     remote: {
                         url: "/pwd",
-                        type: "get",
+                        type: "post",
                         data: {
+                            csrf_token: "{{ csrf_token() }}",
                             password: function () { return $("#password").val(); }
                         }
                     }

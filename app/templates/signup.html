@@ -23,8 +23,9 @@
                     required: true,
                     remote: {
                         url: "/user",
-                        type: "get",
+                        type: "post",
                         data: {
+                            csrf_token: "{{ csrf_token() }}",
                             username: function () { return $("#username").val(); }
                         }
                     }
