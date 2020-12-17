@@ -5,7 +5,6 @@ from flask import (abort, flash, jsonify, redirect, render_template, request,
                    url_for)
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from werkzeug.urls import url_parse
 
 import app.evaluator as evaluator
 from app import app, db, login
@@ -74,6 +73,12 @@ def user():
     return jsonify(False)
 
 
+# 验证当前用户密码是否正确的接口
+@app.route('/pwd', methods=['GET'])
+def pwd():
+    return jsonify(check_password_hash(current_user.password_hash, request.args.get('password')))
+
+
 @app.route('/passwd', methods=['GET', 'POST'])
 @login_required
 def passwd():
@@ -81,8 +86,7 @@ def passwd():
     if form.validate_on_submit():
         current_user.password_hash = generate_password_hash(form.new_password.data)
         db.session.commit()
-        flash('修改密码成功', category='info')
-        return redirect_back()
+        return jsonify({'status': 200})
     return render_template('passwd.html', title='修改密码', form=form)
 
 

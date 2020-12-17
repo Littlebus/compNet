@@ -7,8 +7,68 @@
 <div class="row">
     <div class="col-lg-4 mx-auto text-white">
         {% if form %}
-        {{ wtf.quick_form(form) }}
+        {{ wtf.quick_form(form, id='passwdForm') }}
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    $().ready(function () {
+        $("#passwdForm").validate({
+            rules: {
+                password: {
+                    required: true,
+                    remote: {
+                        url: "/pwd",
+                        type: "get",
+                        data: {
+                            password: function () { return $("#password").val(); }
+                        }
+                    }
+                },
+                new_password: "required",
+                new_password2: {
+                    required: true,
+                    equalTo: "#new_password"
+                }
+            },
+            messages: {
+                password: {
+                    required: "请输入当前密码",
+                    remote: "当前密码错误"
+                },
+                new_password: "请输入新密码",
+                new_password2: {
+                    required: "请输入重复密码",
+                    equalTo: "两次输入的密码不一致"
+                }
+            },
+            submitHandler: function (form) {
+                var param = $("#passwdForm").serialize();
+                $.ajax({
+                    url: "/passwd",
+                    type: "post",
+                    dataType: "json",
+                    data: param,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.status == 200) {
+                            self.location = document.referrer;
+                            $("#flash").html(flashMessage("修改密码成功"));
+                        } else {
+                            $("#flash").html(flashMessage(result.message, 'warning'));
+                        }
+                        return false;
+                    }
+                });
+            },
+            invalidHandler: function (form, validator) {
+                return false;
+            }
+        })
+    });
+</script>
 {% endblock %}

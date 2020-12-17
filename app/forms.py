@@ -6,7 +6,6 @@ from wtforms import (FloatField, IntegerField, PasswordField, StringField,
 from wtforms.validators import (DataRequired, EqualTo, Length, NumberRange,
                                 ValidationError)
 
-from app.models import User
 
 dr = DataRequired(message='字段格式不合法')
 
@@ -24,24 +23,19 @@ class SignupForm(FlaskForm):
     submit    = SubmitField('注册')
 
 
+class PasswdForm(FlaskForm):
+    password      = PasswordField('当前密码')
+    new_password  = PasswordField('新密码')
+    new_password2 = PasswordField('确认新密码')
+    submit        = SubmitField('修改')
+
+
 class RecordForm(FlaskForm):
     name   = StringField('姓名', validators=[dr, Length(min=1, max=64)])
     age    = IntegerField('年龄', validators=[dr])
     height = FloatField('身高(cm)', validators=[dr])
     weight = FloatField('体重(kg)', validators=[dr])
     submit = SubmitField('提交')
-
-
-class PasswdForm(FlaskForm):
-    password      = PasswordField('当前密码', validators=[dr])
-    new_password  = PasswordField('新密码', validators=[dr])
-    new_password2 = PasswordField('确认新密码', \
-        validators=[dr, EqualTo('new_password', message='两次输入的密码不一致')])
-    submit        = SubmitField('修改')
-
-    def validate_password(self, field):
-        if check_password_hash(current_user.password_hash, field.data) is False:
-            raise ValidationError('当前密码错误')
 
 
 class EvaluateForm(FlaskForm):
